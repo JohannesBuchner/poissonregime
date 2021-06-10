@@ -1,0 +1,5 @@
+numpy
+scipy
+flake8
+coveralls
+pytest-html
