@@ -229,14 +229,15 @@ corresponding to the probability</p>
 <dt id="poissonregime.significance">
 <code class="sig-prename descclassname">poissonregime.</code><code class="sig-name descname">significance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">alpha</span></em>, <em class="sig-param"><span class="n">k</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/poissonregime.html#significance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#poissonregime.significance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the significance for detecting n counts when alpha * b are expected.
-If sigma=0 and k=0 (default), this is the case with no additional systematic error and the classic result
-from Li &amp; Ma (1983) is used. Example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">significance</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span>
+If k=0 (default), the classic result of Li &amp; Ma (1983) is used. Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># expected a 10% success rate in 70 tries. Got 10 hits.</span>
+<span class="n">significance</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">70</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>If k&gt;0 then eq.7 from Vianello (2018) is used, which assumes that k is the upper boundary on the fractional
 systematic uncertainty. Example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">significance</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># expected a 10% +- 10% success rate in 70 tries. Got 10 hits.</span>
+<span class="n">significance</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">70</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>If k&lt;0, then alpha * b is assumed to have no uncertainties.</p>
@@ -272,9 +273,11 @@ systematic uncertainty. Example:</p>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the likelihood value</p>
+<dd class="field-even"><p>the probability</p>
 </dd>
 </dl>
+<p>Knoetig2014, appendix C. A flat prior on the background rate is assumed.
+<a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2014ApJ...790..106K/abstract">https://ui.adsabs.harvard.edu/abs/2014ApJ…790..106K/abstract</a></p>
 </dd></dl>
 
 <dl class="py function">
@@ -294,6 +297,7 @@ systematic uncertainty. Example:</p>
 </dd>
 </dl>
 <p>Caveat: this assumes a uniform prior on the number of events.</p>
+<p>See e.g., <a class="reference external" href="https://arxiv.org/abs/1012.0566">https://arxiv.org/abs/1012.0566</a></p>
 </dd></dl>
 
 <dl class="py function">

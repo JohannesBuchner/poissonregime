@@ -12,6 +12,9 @@ Welcome to poissonregime's documentation!
 
 .. include:: ../README.rst
 
+
+Logo by https://www.flaticon.com/authors/iconmark.
+
 Indices and tables
 ==================
 * :ref:`genindex`

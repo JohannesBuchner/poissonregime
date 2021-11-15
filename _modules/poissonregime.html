@@ -230,15 +230,16 @@
 <div class="viewcode-block" id="significance"><a class="viewcode-back" href="../poissonregime.html#poissonregime.significance">[docs]</a><span class="k">def</span> <span class="nf">significance</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the significance for detecting n counts when alpha * b are expected.</span>
-<span class="sd">    If sigma=0 and k=0 (default), this is the case with no additional systematic error and the classic result</span>
-<span class="sd">    from Li &amp; Ma (1983) is used. Example::</span>
+<span class="sd">    If k=0 (default), the classic result of Li &amp; Ma (1983) is used. Example::</span>
 
-<span class="sd">        significance(n, b, alpha)</span>
+<span class="sd">        # expected a 10% success rate in 70 tries. Got 10 hits.</span>
+<span class="sd">        significance(n=10, b=70, alpha=0.1) </span>
 
 <span class="sd">    If k&gt;0 then eq.7 from Vianello (2018) is used, which assumes that k is the upper boundary on the fractional</span>
 <span class="sd">    systematic uncertainty. Example::</span>
 <span class="sd"> </span>
-<span class="sd">        significance(n, b, alpha, k=0.1)</span>
+<span class="sd">        # expected a 10% +- 10% success rate in 70 tries. Got 10 hits.</span>
+<span class="sd">        significance(n=10, b=70, alpha=0.1, k=0.1)</span>
 
 <span class="sd">    If k&lt;0, then alpha * b is assumed to have no uncertainties.</span>
 
@@ -266,7 +267,10 @@
 <span class="sd">    :param alpha: ratio of the source observation efficiency and background observation efficiency</span>
 <span class="sd">    :param exposure: exposure time, area, volume, or similar to convert the rate to expected source counts.</span>
 <span class="sd">        (either a float, or an array of the same shape of n)</span>
-<span class="sd">    :return: the likelihood value</span>
+<span class="sd">    :return: the probability</span>
+
+<span class="sd">    Knoetig2014, appendix C. A flat prior on the background rate is assumed.</span>
+<span class="sd">    https://ui.adsabs.harvard.edu/abs/2014ApJ...790..106K/abstract</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">nexp</span> <span class="o">=</span> <span class="n">exposure</span> <span class="o">*</span> <span class="n">rate</span>
@@ -287,6 +291,8 @@
 <span class="sd">    :return: error bars on the number of events. By default, the median, lower and upper 1 sigma estimates.</span>
 
 <span class="sd">    Caveat: this assumes a uniform prior on the number of events.</span>
+
+<span class="sd">    See e.g., https://arxiv.org/abs/1012.0566</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">))</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">k</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;k must be integer&quot;</span>
     <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">q</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">),</span> <span class="s2">&quot;Quantile must be between zero and one.&quot;</span>
