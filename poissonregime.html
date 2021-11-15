@@ -1,0 +1,368 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>poissonregime module &mdash; poissonregime 0.5.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="_static/icon.ico"/>
+  
+  
+  
+    <link rel="canonical" href="https://johannesbuchner.github.io/poissonregime/poissonregime.html"/>
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Frequently Asked Questions" href="issues.html" />
+    <link rel="prev" title="gamma_limits_sensitivity package" href="gamma_limits_sensitivity.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> poissonregime
+          
+
+          
+            
+            <img src="_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="gamma_limits_sensitivity.html">gamma_limits_sensitivity package</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">poissonregime module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="issues.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="history.html">Release Notes</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">poissonregime</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content style-external-links">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="modules.html">API</a> &raquo;</li>
+        
+      <li>poissonregime module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="module-poissonregime">
+<span id="poissonregime-module"></span><h1>poissonregime module<a class="headerlink" href="#module-poissonregime" title="Permalink to this headline">¶</a></h1>
+<p>poissonregime module.</p>
+<dl class="py function">
+<dt id="poissonregime.significance_from_pvalue">
+<code class="sig-prename descclassname">poissonregime.</code><code class="sig-name descname">significance_from_pvalue</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pvalue</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/poissonregime.html#significance_from_pvalue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#poissonregime.significance_from_pvalue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the significance (i.e., the z-score) for a given probability, i.e., the number of standard deviations (sigma)
+corresponding to the probability</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>pvalue</strong> – input probability</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>z-score (or significance in units of sigma)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="poissonregime.pvalue_from_significance">
+<code class="sig-prename descclassname">poissonregime.</code><code class="sig-name descname">pvalue_from_significance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">zscore</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/poissonregime.html#pvalue_from_significance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#poissonregime.pvalue_from_significance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the probability for a given significance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>pvalue</strong> – z-score (or significance in units of sigma)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>probability</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="poissonregime.significance">
+<code class="sig-prename descclassname">poissonregime.</code><code class="sig-name descname">significance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">alpha</span></em>, <em class="sig-param"><span class="n">k</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/poissonregime.html#significance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#poissonregime.significance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the significance for detecting n counts when alpha * b are expected.
+If sigma=0 and k=0 (default), this is the case with no additional systematic error and the classic result
+from Li &amp; Ma (1983) is used. Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">significance</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If k&gt;0 then eq.7 from Vianello (2018) is used, which assumes that k is the upper boundary on the fractional
+systematic uncertainty. Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">significance</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If k&lt;0, then alpha * b is assumed to have no uncertainties.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> – observed counts (can be an array)</p></li>
+<li><p><strong>b</strong> – expected background counts (can be an array)</p></li>
+<li><p><strong>alpha</strong> – ratio of the source observation efficiency and background observation efficiency
+(either a float, or an array of the same shape of n)</p></li>
+<li><p><strong>k</strong> – maximum fractional systematic uncertainty expected (either a float, or an array of the same shape of n)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the significance (z score) for the measurement(s)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="poissonregime.posterior">
+<code class="sig-prename descclassname">poissonregime.</code><code class="sig-name descname">posterior</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rate</span></em>, <em class="sig-param"><span class="n">n</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">alpha</span></em>, <em class="sig-param"><span class="n">exposure</span><span class="o">=</span><span class="default_value">1.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/poissonregime.html#posterior"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#poissonregime.posterior" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the posterior of a source count rate for detecting n counts when alpha * b are expected.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rate</strong> – count rate (can be an array)</p></li>
+<li><p><strong>n</strong> – observed counts (can be an array)</p></li>
+<li><p><strong>b</strong> – expected background counts (can be an array)</p></li>
+<li><p><strong>alpha</strong> – ratio of the source observation efficiency and background observation efficiency</p></li>
+<li><p><strong>exposure</strong> – exposure time, area, volume, or similar to convert the rate to expected source counts.
+(either a float, or an array of the same shape of n)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the likelihood value</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="poissonregime.uncertainties_rate">
+<code class="sig-prename descclassname">poissonregime.</code><code class="sig-name descname">uncertainties_rate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">k</span></em>, <em class="sig-param"><span class="n">q</span><span class="o">=</span><span class="default_value">array([0.5, 0.84134475, 0.15865525])</span></em>, <em class="sig-param"><span class="n">exposure</span><span class="o">=</span><span class="default_value">1.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/poissonregime.html#uncertainties_rate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#poissonregime.uncertainties_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Give error bars on the number of events, given k detections.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> – number of hits, events, detections or sources.</p></li>
+<li><p><strong>q</strong> – quantile(s) to consider. 0.5 is the median, use pvalue_from_significance to convert from sigma units.</p></li>
+<li><p><strong>exposure</strong> – exposure time, area, volume, or similar to normalise to a rate.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>error bars on the number of events. By default, the median, lower and upper 1 sigma estimates.</p>
+</dd>
+</dl>
+<p>Caveat: this assumes a uniform prior on the number of events.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="poissonregime.uncertainties_fraction">
+<code class="sig-prename descclassname">poissonregime.</code><code class="sig-name descname">uncertainties_fraction</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">k</span></em>, <em class="sig-param"><span class="n">n</span></em>, <em class="sig-param"><span class="n">q</span><span class="o">=</span><span class="default_value">array([0.5, 0.84134475, 0.15865525])</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/poissonregime.html#uncertainties_fraction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#poissonregime.uncertainties_fraction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Give error bars on a fraction, given k positives out of n possible.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> – number of hits, events, detections or sources.</p></li>
+<li><p><strong>n</strong> – number of opportunities, total sample size, time bins, slots.</p></li>
+<li><p><strong>q</strong> – quantile(s) to consider. 0.5 is the median, use pvalue_from_significance to convert from sigma units.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>error bars on the fraction. By default, the median, lower and upper 1 sigma estimates.</p>
+</dd>
+</dl>
+<p>See e.g., <a class="reference external" href="https://arxiv.org/abs/1012.0566">https://arxiv.org/abs/1012.0566</a></p>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="issues.html" class="btn btn-neutral float-right" title="Frequently Asked Questions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="gamma_limits_sensitivity.html" class="btn btn-neutral float-left" title="gamma_limits_sensitivity package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020-2021, Johannes Buchner
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

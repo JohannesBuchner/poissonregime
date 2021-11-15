@@ -1,0 +1,1424 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>gamma_limits_sensitivity &mdash; poissonregime 0.5.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../_static/icon.ico"/>
+  
+  
+  
+    <link rel="canonical" href="https://johannesbuchner.github.io/poissonregime/_modules/gamma_limits_sensitivity.html"/>
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> poissonregime
+          
+
+          
+            
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../issues.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">Release Notes</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">poissonregime</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content style-external-links">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>gamma_limits_sensitivity</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for gamma_limits_sensitivity</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">This is the hard working code in order to calculate ULs, sensitivities,</span>
+<span class="sd">and time to detections.</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">interpolate</span>
+<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">brentq</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">integrate</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">corner</span>
+
+
+<div class="viewcode-block" id="upper_limit"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.upper_limit">[docs]</a><span class="k">def</span> <span class="nf">upper_limit</span><span class="p">(</span><span class="n">t_obs</span><span class="p">,</span> <span class="n">lambda_lim</span><span class="p">,</span> <span class="n">a_eff</span><span class="p">,</span> <span class="n">e_0</span><span class="p">,</span> <span class="n">plot_resolution</span><span class="o">=</span><span class="mi">30</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This function generates all plots for the command &#39;ul&#39; from</span>
+<span class="sd">    input data. It takes:</span>
+
+<span class="sd">    t_obs   in seconds</span>
+<span class="sd">    lambda_lim   from Rolke, Knoetig, ...</span>
+<span class="sd">    a_eff   A path to the file with effective area over true energy after cuts</span>
+<span class="sd">    plot_resolution    a parameter for running tests faster</span>
+
+<span class="sd">    It returns a dictionary with results.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">a_eff_interpol</span> <span class="o">=</span> <span class="n">get_effective_area</span><span class="p">(</span><span class="n">a_eff</span><span class="p">)</span>
+
+    <span class="c1"># make the figures</span>
+    <span class="n">phasespace_figure</span> <span class="o">=</span> <span class="n">get_ul_phasespace_figure</span><span class="p">(</span>
+        <span class="n">t_obs</span><span class="p">,</span>
+        <span class="n">lambda_lim</span><span class="p">,</span>
+        <span class="n">a_eff_interpol</span><span class="p">,</span>
+        <span class="n">e_0</span><span class="p">,</span>
+        <span class="n">pixels_per_line</span><span class="o">=</span><span class="n">plot_resolution</span><span class="p">)</span>
+
+    <span class="n">spectrum_figure</span><span class="p">,</span> <span class="n">energy_x</span><span class="p">,</span> <span class="n">dn_de_y</span> <span class="o">=</span> <span class="n">get_ul_spectrum_figure</span><span class="p">(</span>
+        <span class="n">t_obs</span><span class="p">,</span>
+        <span class="n">lambda_lim</span><span class="p">,</span>
+        <span class="n">a_eff_interpol</span><span class="p">,</span>
+        <span class="n">e_0</span><span class="p">,</span>
+        <span class="n">n_points_to_plot</span><span class="o">=</span><span class="n">plot_resolution</span><span class="p">)</span>
+
+    <span class="n">sensitive_energy_figure</span><span class="p">,</span> <span class="n">gamma_s</span><span class="p">,</span> <span class="n">e_sens_s</span> <span class="o">=</span> <span class="n">get_sensitive_energy_figure</span><span class="p">(</span>
+        <span class="n">a_eff_interpol</span>
+        <span class="p">)</span>
+    <span class="n">a_eff_figure</span> <span class="o">=</span> <span class="n">get_effective_area_figure</span><span class="p">(</span><span class="n">a_eff_interpol</span><span class="p">)</span>
+
+    <span class="n">figures</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;ul_phasespace&#39;</span><span class="p">:</span> <span class="n">phasespace_figure</span><span class="p">,</span>
+        <span class="s1">&#39;ul_integral_spectral_exclusion_zone&#39;</span><span class="p">:</span> <span class="n">spectrum_figure</span><span class="p">,</span>
+        <span class="s1">&#39;ul_sensitive_energy&#39;</span><span class="p">:</span> <span class="n">sensitive_energy_figure</span><span class="p">,</span>
+        <span class="s1">&#39;ul_effective_area&#39;</span><span class="p">:</span> <span class="n">a_eff_figure</span>
+        <span class="p">}</span>
+
+    <span class="n">dictionary</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;plots&#39;</span><span class="p">:</span> <span class="n">figures</span><span class="p">,</span>
+        <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;ul_integral_spectral_exclusion_zone&#39;</span><span class="p">:</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">((</span><span class="n">energy_x</span><span class="p">,</span> <span class="n">dn_de_y</span><span class="p">)),</span>
+            <span class="s1">&#39;ul_sensitive_energy&#39;</span><span class="p">:</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">((</span><span class="n">gamma_s</span><span class="p">,</span> <span class="n">e_sens_s</span><span class="p">))</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">dictionary</span></div>
+
+
+<div class="viewcode-block" id="sensitivity"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.sensitivity">[docs]</a><span class="k">def</span> <span class="nf">sensitivity</span><span class="p">(</span><span class="n">sigma_bg</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">t_obs</span><span class="p">,</span> <span class="n">a_eff</span><span class="p">,</span> <span class="n">e_0</span><span class="p">,</span> <span class="n">plot_resolution</span><span class="o">=</span><span class="mi">30</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This function generates all plots for the command &#39;sens&#39; from</span>
+<span class="sd">    input data. It takes:</span>
+
+<span class="sd">    sigma_bg    in 1/seconds</span>
+<span class="sd">    alpha   on/off exposure ratio</span>
+<span class="sd">    t_obs   observation time in seconds</span>
+<span class="sd">    a_eff   A path to the file with effective area over true energy after cuts</span>
+
+<span class="sd">    It returns a dictionary with results.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">a_eff_interpol</span> <span class="o">=</span> <span class="n">get_effective_area</span><span class="p">(</span><span class="n">a_eff</span><span class="p">)</span>
+
+    <span class="c1"># make the figures</span>
+    <span class="n">phasespace_figure</span> <span class="o">=</span> <span class="n">get_sens_phasespace_figure</span><span class="p">(</span>
+        <span class="n">sigma_bg</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="p">,</span>
+        <span class="n">t_obs</span><span class="p">,</span>
+        <span class="n">a_eff_interpol</span><span class="p">,</span>
+        <span class="n">pixels_per_line</span><span class="o">=</span><span class="n">plot_resolution</span><span class="p">)</span>
+
+    <span class="n">spectrum_figure</span><span class="p">,</span> <span class="n">energy_x</span><span class="p">,</span> <span class="n">dn_de_y</span> <span class="o">=</span> <span class="n">get_sens_spectrum_figure</span><span class="p">(</span>
+        <span class="n">sigma_bg</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="p">,</span>
+        <span class="n">t_obs</span><span class="p">,</span>
+        <span class="n">a_eff_interpol</span><span class="p">,</span>
+        <span class="n">e_0</span><span class="p">,</span>
+        <span class="n">n_points_to_plot</span><span class="o">=</span><span class="n">plot_resolution</span>
+        <span class="p">)</span>
+
+    <span class="n">sensitive_energy_figure</span><span class="p">,</span> <span class="n">gamma_s</span><span class="p">,</span> <span class="n">e_sens_s</span> <span class="o">=</span> <span class="n">get_sensitive_energy_figure</span><span class="p">(</span>
+        <span class="n">a_eff_interpol</span>
+        <span class="p">)</span>
+    <span class="n">a_eff_figure</span> <span class="o">=</span> <span class="n">get_effective_area_figure</span><span class="p">(</span><span class="n">a_eff_interpol</span><span class="p">)</span>
+
+    <span class="n">figures</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;sens_phasespace&#39;</span><span class="p">:</span> <span class="n">phasespace_figure</span><span class="p">,</span>
+        <span class="s1">&#39;sens_integral_spectral_exclusion_zone&#39;</span><span class="p">:</span> <span class="n">spectrum_figure</span><span class="p">,</span>
+        <span class="s1">&#39;sens_sensitive_energy&#39;</span><span class="p">:</span> <span class="n">sensitive_energy_figure</span><span class="p">,</span>
+        <span class="s1">&#39;sens_effective_area&#39;</span><span class="p">:</span> <span class="n">a_eff_figure</span>
+        <span class="p">}</span>
+
+    <span class="n">dictionary</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;plots&#39;</span><span class="p">:</span> <span class="n">figures</span><span class="p">,</span>
+        <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sens_integral_spectral_exclusion_zone&#39;</span><span class="p">:</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">((</span><span class="n">energy_x</span><span class="p">,</span> <span class="n">dn_de_y</span><span class="p">)),</span>
+            <span class="s1">&#39;sens_sensitive_energy&#39;</span><span class="p">:</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">((</span><span class="n">gamma_s</span><span class="p">,</span> <span class="n">e_sens_s</span><span class="p">))</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">dictionary</span></div>
+
+
+<div class="viewcode-block" id="predict"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.predict">[docs]</a><span class="k">def</span> <span class="nf">predict</span><span class="p">(</span>
+        <span class="n">sigma_bg</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="p">,</span>
+        <span class="n">f_0</span><span class="p">,</span>
+        <span class="n">df_0</span><span class="p">,</span>
+        <span class="n">gamma</span><span class="p">,</span>
+        <span class="n">dgamma</span><span class="p">,</span>
+        <span class="n">e_0</span><span class="p">,</span>
+        <span class="n">a_eff</span><span class="p">,</span>
+        <span class="n">plot_resolution</span><span class="o">=</span><span class="mi">30</span>
+        <span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This function generates all plots for the command &#39;predict&#39; from</span>
+<span class="sd">    input data. It takes:</span>
+
+<span class="sd">    sigma_bg    in 1/seconds</span>
+<span class="sd">    alpha   on/off exposure ratio</span>
+<span class="sd">    f_0     flux normalization in 1/(cm^2 s TeV)</span>
+<span class="sd">    df_0    flux normalization error 1 sigma 1/(cm^2 s TeV)</span>
+<span class="sd">    gamma   power law index (&lt;0)</span>
+<span class="sd">    dgamma  power law index error 1 sigma</span>
+<span class="sd">    e_0     reference energy in TeV</span>
+<span class="sd">    a_eff   A path to the file with effective area over true energy after cuts</span>
+
+<span class="sd">    It returns a dictionary with results.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">a_eff_interpol</span> <span class="o">=</span> <span class="n">get_effective_area</span><span class="p">(</span><span class="n">a_eff</span><span class="p">)</span>
+
+    <span class="c1"># make the figures</span>
+    <span class="n">phasespace_figure</span> <span class="o">=</span> <span class="n">get_predict_phasespace_figure</span><span class="p">(</span>
+        <span class="n">sigma_bg</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="p">,</span>
+        <span class="n">f_0</span><span class="p">,</span>
+        <span class="n">df_0</span><span class="p">,</span>
+        <span class="n">gamma</span><span class="p">,</span>
+        <span class="n">dgamma</span><span class="p">,</span>
+        <span class="n">e_0</span><span class="p">,</span>
+        <span class="n">a_eff_interpol</span><span class="p">,</span>
+        <span class="n">pixels_per_line</span><span class="o">=</span><span class="n">plot_resolution</span><span class="p">)</span>
+
+    <span class="n">t_obs_samples</span> <span class="o">=</span> <span class="n">get_t_obs_samples</span><span class="p">(</span>
+        <span class="n">sigma_bg</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="p">,</span>
+        <span class="n">f_0</span><span class="p">,</span>
+        <span class="n">df_0</span><span class="p">,</span>
+        <span class="n">gamma</span><span class="p">,</span>
+        <span class="n">dgamma</span><span class="p">,</span>
+        <span class="n">e_0</span><span class="p">,</span>
+        <span class="n">a_eff_interpol</span><span class="p">,</span>
+        <span class="n">n_samples</span><span class="o">=</span><span class="n">plot_resolution</span><span class="o">*</span><span class="mi">3000</span>
+        <span class="p">)</span>
+
+    <span class="n">t_obs_est</span> <span class="o">=</span> <span class="n">get_t_obs_est_from_samples</span><span class="p">(</span><span class="n">t_obs_samples</span><span class="p">)</span>
+
+    <span class="n">spectrum_figure</span><span class="p">,</span> <span class="n">energy_x</span><span class="p">,</span> <span class="n">dn_de_ys</span> <span class="o">=</span> <span class="n">get_predict_spectrum_figure</span><span class="p">(</span>
+        <span class="n">sigma_bg</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="p">,</span>
+        <span class="n">t_obs_est</span><span class="p">,</span>
+        <span class="n">f_0</span><span class="p">,</span>
+        <span class="n">df_0</span><span class="p">,</span>
+        <span class="n">gamma</span><span class="p">,</span>
+        <span class="n">dgamma</span><span class="p">,</span>
+        <span class="n">e_0</span><span class="p">,</span>
+        <span class="n">a_eff_interpol</span><span class="p">,</span>
+        <span class="n">n_points_to_plot</span><span class="o">=</span><span class="n">plot_resolution</span>
+        <span class="p">)</span>
+
+    <span class="n">sensitive_energy_figure</span><span class="p">,</span> <span class="n">gamma_s</span><span class="p">,</span> <span class="n">e_sens_s</span> <span class="o">=</span> <span class="n">get_sensitive_energy_figure</span><span class="p">(</span>
+        <span class="n">a_eff_interpol</span>
+        <span class="p">)</span>
+    <span class="n">a_eff_figure</span> <span class="o">=</span> <span class="n">get_effective_area_figure</span><span class="p">(</span><span class="n">a_eff_interpol</span><span class="p">)</span>
+
+    <span class="n">figures</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;predict_phasespace&#39;</span><span class="p">:</span> <span class="n">phasespace_figure</span><span class="p">,</span>
+        <span class="s1">&#39;predict_integral_spectral_exclusion_zone&#39;</span><span class="p">:</span> <span class="n">spectrum_figure</span><span class="p">,</span>
+        <span class="s1">&#39;predict_sensitive_energy&#39;</span><span class="p">:</span> <span class="n">sensitive_energy_figure</span><span class="p">,</span>
+        <span class="s1">&#39;predict_effective_area&#39;</span><span class="p">:</span> <span class="n">a_eff_figure</span>
+        <span class="p">}</span>
+
+    <span class="n">dictionary</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;plots&#39;</span><span class="p">:</span> <span class="n">figures</span><span class="p">,</span>
+        <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;predict_integral_spectral_exclusion_zone&#39;</span><span class="p">:</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">energy_x</span><span class="p">,</span> <span class="n">dn_de_ys</span><span class="p">))</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
+            <span class="s1">&#39;predict_sensitive_energy&#39;</span><span class="p">:</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">((</span><span class="n">gamma_s</span><span class="p">,</span> <span class="n">e_sens_s</span><span class="p">)),</span>
+            <span class="s1">&#39;predict_t_obs_est&#39;</span><span class="p">:</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">t_obs_est</span><span class="p">)</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">dictionary</span></div>
+
+
+<div class="viewcode-block" id="get_effective_area_test_relative_paths"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.get_effective_area_test_relative_paths">[docs]</a><span class="k">def</span> <span class="nf">get_effective_area_test_relative_paths</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Helper function to get the paths of stored effective areas</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">a_eff_test_relative_paths</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;/resources/A_eff/MAGIC_lowZd_Ecut_300GeV.dat&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;/resources/A_eff/MAGIC_medZd_Ecut_300GeV.dat&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;/resources/A_eff/VERITAS_V5_lowZd_McCutcheon.dat&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;/resources/A_eff/uhe_test_aperture.dat&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;/resources/A_eff/AeffEnergy_P8R2_OnAxis_Total.dat&#39;</span>
+    <span class="p">]</span>
+    <span class="k">return</span> <span class="n">a_eff_test_relative_paths</span></div>
+
+
+<div class="viewcode-block" id="get_effective_area"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.get_effective_area">[docs]</a><span class="k">def</span> <span class="nf">get_effective_area</span><span class="p">(</span><span class="n">a_eff_path</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Function to get the interpolated effective area</span>
+<span class="sd">    from a file path</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">a_eff_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">a_eff_path</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+
+    <span class="c1"># interpolate the data points, every energy outside definition range</span>
+    <span class="c1"># from the data file is assumed to have 0 effective area</span>
+    <span class="n">a_eff_interpol</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span>
+        <span class="n">a_eff_data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="n">a_eff_data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">fill_value</span><span class="o">=</span><span class="mf">0.</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">a_eff_interpol</span></div>
+
+
+<div class="viewcode-block" id="prepare_phasespace_meshes"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.prepare_phasespace_meshes">[docs]</a><span class="k">def</span> <span class="nf">prepare_phasespace_meshes</span><span class="p">(</span>
+        <span class="n">t_obs</span><span class="p">,</span> <span class="n">lambda_lim</span><span class="p">,</span> <span class="n">a_eff_interpol</span><span class="p">,</span> <span class="n">e_0</span><span class="p">,</span> <span class="n">pixels_per_line</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=-</span><span class="mf">2.6</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    determine parameter plot ranges</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">f_0</span> <span class="o">=</span> <span class="n">get_ul_f_0</span><span class="p">(</span><span class="n">t_obs</span><span class="p">,</span> <span class="n">lambda_lim</span><span class="p">,</span> <span class="n">a_eff_interpol</span><span class="p">,</span> <span class="n">e_0</span><span class="p">,</span> <span class="n">gamma</span><span class="p">)</span>
+    <span class="n">f_0_limits</span><span class="p">,</span> <span class="n">gamma_limits</span> <span class="o">=</span> <span class="n">get_f_0_gamma_limits</span><span class="p">(</span><span class="n">f_0</span><span class="p">,</span> <span class="n">gamma</span><span class="p">)</span>
+    <span class="n">f_0_mesh</span><span class="p">,</span> <span class="n">gamma_mesh</span> <span class="o">=</span> <span class="n">get_f_0_gamma_mesh</span><span class="p">(</span>
+        <span class="n">f_0_limits</span><span class="p">,</span>
+        <span class="n">gamma_limits</span><span class="p">,</span>
+        <span class="n">pixels_per_line</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">f_0_mesh</span><span class="p">,</span> <span class="n">gamma_mesh</span></div>
+
+
+<div class="viewcode-block" id="get_ul_phasespace_figure"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.get_ul_phasespace_figure">[docs]</a><span class="k">def</span> <span class="nf">get_ul_phasespace_figure</span><span class="p">(</span>
+        <span class="n">t_obs</span><span class="p">,</span>
+        <span class="n">lambda_lim</span><span class="p">,</span>
+        <span class="n">a_eff_interpol</span><span class="p">,</span>
+        <span class="n">e_0</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span>
+        <span class="n">pixels_per_line</span><span class="o">=</span><span class="mi">30</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Function to generate the plot of average counts</span>
+<span class="sd">    lambda_s in the phase space of the power law.</span>
+<span class="sd">    It will indicate the limit lambda_lim in the same plot.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">figure</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+
+    <span class="n">f_0_mesh</span><span class="p">,</span> <span class="n">gamma_mesh</span> <span class="o">=</span> <span class="n">prepare_phasespace_meshes</span><span class="p">(</span>
+        <span class="n">t_obs</span><span class="p">,</span> <span class="n">lambda_lim</span><span class="p">,</span> <span class="n">a_eff_interpol</span><span class="p">,</span> <span class="n">e_0</span><span class="p">,</span> <span class="n">pixels_per_line</span><span class="p">)</span>
+
+    <span class="n">plot_lambda_s_mesh</span><span class="p">(</span>
+        <span class="n">t_obs</span><span class="p">,</span>
+        <span class="n">lambda_lim</span><span class="p">,</span>
+        <span class="n">a_eff_interpol</span><span class="p">,</span>
+        <span class="n">e_0</span><span class="p">,</span>
+        <span class="n">f_0_mesh</span><span class="p">,</span>
+        <span class="n">gamma_mesh</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">figure</span></div>
+
+
+<div class="viewcode-block" id="get_ul_spectrum_figure"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.get_ul_spectrum_figure">[docs]</a><span class="k">def</span> <span class="nf">get_ul_spectrum_figure</span><span class="p">(</span>
+        <span class="n">t_obs</span><span class="p">,</span> <span class="n">lambda_lim</span><span class="p">,</span> <span class="n">a_eff_interpol</span><span class="p">,</span> <span class="n">e_0</span><span class="p">,</span> <span class="n">n_points_to_plot</span><span class="o">=</span><span class="mi">21</span>
+        <span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Get the integral spectral exclusion zone for the &#39;ul&#39; command</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">figure</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+
+    <span class="n">energy_x</span><span class="p">,</span> <span class="n">dn_de_y</span> <span class="o">=</span> <span class="n">plot_ul_spectrum_figure</span><span class="p">(</span>
+        <span class="n">t_obs</span><span class="p">,</span>
+        <span class="n">lambda_lim</span><span class="p">,</span>
+        <span class="n">a_eff_interpol</span><span class="p">,</span>
+        <span class="n">e_0</span><span class="p">,</span>
+        <span class="n">n_points_to_plot</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">figure</span><span class="p">,</span> <span class="n">energy_x</span><span class="p">,</span> <span class="n">dn_de_y</span></div>
+
+
+<div class="viewcode-block" id="get_sens_phasespace_figure"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.get_sens_phasespace_figure">[docs]</a><span class="k">def</span> <span class="nf">get_sens_phasespace_figure</span><span class="p">(</span>
+        <span class="n">sigma_bg</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">t_obs</span><span class="p">,</span> <span class="n">a_eff_interpol</span><span class="p">,</span> <span class="n">e_0</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">pixels_per_line</span><span class="o">=</span><span class="mi">30</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This command produces a phase space figure and fills it with</span>
+<span class="sd">    time to detection for given telescope parameters</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">figure</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+
+    <span class="n">s_lim</span> <span class="o">=</span> <span class="n">sigma_lim_li_ma_criterion</span><span class="p">(</span><span class="n">sigma_bg</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">t_obs</span><span class="p">)</span>
+    <span class="n">lambda_lim</span> <span class="o">=</span> <span class="n">s_lim</span><span class="o">*</span><span class="n">t_obs</span>
+
+    <span class="n">f_0_mesh</span><span class="p">,</span> <span class="n">gamma_mesh</span> <span class="o">=</span> <span class="n">prepare_phasespace_meshes</span><span class="p">(</span>
+        <span class="n">t_obs</span><span class="p">,</span> <span class="n">lambda_lim</span><span class="p">,</span> <span class="n">a_eff_interpol</span><span class="p">,</span> <span class="n">e_0</span><span class="p">,</span> <span class="n">pixels_per_line</span><span class="p">)</span>
+
+    <span class="n">plot_t_obs_mesh</span><span class="p">(</span>
+        <span class="n">sigma_bg</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="p">,</span>
+        <span class="n">a_eff_interpol</span><span class="p">,</span>
+        <span class="n">e_0</span><span class="p">,</span>
+        <span class="n">f_0_mesh</span><span class="p">,</span>
+        <span class="n">gamma_mesh</span><span class="p">,</span>
+        <span class="n">t_obs</span><span class="o">=</span><span class="n">t_obs</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">figure</span></div>
+
+
+<div class="viewcode-block" id="get_sens_spectrum_figure"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.get_sens_spectrum_figure">[docs]</a><span class="k">def</span> <span class="nf">get_sens_spectrum_figure</span><span class="p">(</span>
+        <span class="n">sigma_bg</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">t_obs</span><span class="p">,</span> <span class="n">a_eff_interpol</span><span class="p">,</span> <span class="n">e_0</span><span class="p">,</span> <span class="n">n_points_to_plot</span><span class="o">=</span><span class="mi">21</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This command produces a spectrum figure and fills it with the</span>
+<span class="sd">    integral spectral exclusion zone for a given observation</span>
+<span class="sd">    time and telescope parameters</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">figure</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+
+    <span class="n">energy_x</span><span class="p">,</span> <span class="n">dn_de_y</span> <span class="o">=</span> <span class="n">plot_sens_spectrum_figure</span><span class="p">(</span>
+        <span class="n">sigma_bg</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">t_obs</span><span class="p">,</span> <span class="n">a_eff_interpol</span><span class="p">,</span> <span class="n">e_0</span><span class="p">,</span> <span class="n">n_points_to_plot</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">figure</span><span class="p">,</span> <span class="n">energy_x</span><span class="p">,</span> <span class="n">dn_de_y</span></div>
+
+
+<div class="viewcode-block" id="get_predict_phasespace_figure"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.get_predict_phasespace_figure">[docs]</a><span class="k">def</span> <span class="nf">get_predict_phasespace_figure</span><span class="p">(</span>
+        <span class="n">sigma_bg</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="p">,</span>
+        <span class="n">f_0</span><span class="p">,</span>
+        <span class="n">df_0</span><span class="p">,</span>
+        <span class="n">gamma</span><span class="p">,</span>
+        <span class="n">dgamma</span><span class="p">,</span>
+        <span class="n">e_0</span><span class="p">,</span>
+        <span class="n">a_eff_interpol</span><span class="p">,</span>
+        <span class="n">pixels_per_line</span><span class="o">=</span><span class="mi">30</span>
+        <span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This function creates a figure and fills it with</span>
+<span class="sd">    relevant phase space functions, such as 2D confidence</span>
+<span class="sd">    intervals representing the source emission and</span>
+<span class="sd">    time to detection</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># first calculate the time to detection</span>
+    <span class="c1"># assuming for the mode of the emission parameters</span>
+    <span class="n">t_obs</span> <span class="o">=</span> <span class="n">t_obs_li_ma_criterion</span><span class="p">(</span>
+        <span class="n">f_0</span> <span class="o">*</span> <span class="n">effective_area_averaged_flux</span><span class="p">(</span>
+            <span class="n">gamma</span><span class="p">,</span>
+            <span class="n">e_0</span><span class="p">,</span>
+            <span class="n">a_eff_interpol</span>
+            <span class="p">),</span>
+        <span class="n">sigma_bg</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="n">phasespace_figure</span> <span class="o">=</span> <span class="n">get_sens_phasespace_figure</span><span class="p">(</span>
+        <span class="n">sigma_bg</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="p">,</span>
+        <span class="n">t_obs</span><span class="p">,</span>
+        <span class="n">a_eff_interpol</span><span class="p">,</span>
+        <span class="n">e_0</span><span class="o">=</span><span class="n">e_0</span><span class="p">,</span>
+        <span class="n">pixels_per_line</span><span class="o">=</span><span class="n">pixels_per_line</span><span class="p">)</span>
+
+    <span class="n">plot_predict_contours_from_phasespace_parameters</span><span class="p">(</span>
+        <span class="n">f_0</span><span class="p">,</span>
+        <span class="n">df_0</span><span class="p">,</span>
+        <span class="n">gamma</span><span class="p">,</span>
+        <span class="n">dgamma</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">phasespace_figure</span></div>
+
+
+<div class="viewcode-block" id="get_predict_spectrum_figure"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.get_predict_spectrum_figure">[docs]</a><span class="k">def</span> <span class="nf">get_predict_spectrum_figure</span><span class="p">(</span>
+        <span class="n">sigma_bg</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="p">,</span>
+        <span class="n">t_obs_est</span><span class="p">,</span>
+        <span class="n">f_0</span><span class="p">,</span>
+        <span class="n">df_0</span><span class="p">,</span>
+        <span class="n">gamma</span><span class="p">,</span>
+        <span class="n">dgamma</span><span class="p">,</span>
+        <span class="n">e_0</span><span class="p">,</span>
+        <span class="n">a_eff_interpol</span><span class="p">,</span>
+        <span class="n">n_points_to_plot</span><span class="o">=</span><span class="mi">21</span>
+        <span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This function generates a spectral plot from</span>
+<span class="sd">    precalculated times of observation until detection</span>
+<span class="sd">    for a specific telescope analysis</span>
+
+<span class="sd">    It shows the integral spectral exclusion zone</span>
+<span class="sd">    for the median time until detection, and the</span>
+<span class="sd">    integral spectral exclusion zones for half that time</span>
+<span class="sd">    and double that time.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">spectrum_figure</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+
+    <span class="n">n_samples</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">energy_range</span> <span class="o">=</span> <span class="n">get_energy_range</span><span class="p">(</span><span class="n">a_eff_interpol</span><span class="p">)</span>
+    <span class="n">phasespace_samples</span> <span class="o">=</span> <span class="n">get_phasespace_samples</span><span class="p">(</span>
+        <span class="n">f_0</span><span class="p">,</span>
+        <span class="n">df_0</span><span class="p">,</span>
+        <span class="n">gamma</span><span class="p">,</span>
+        <span class="n">dgamma</span><span class="p">,</span>
+        <span class="n">n_samples</span>
+    <span class="p">)</span>
+    <span class="n">plot_source_emission_spectrum_with_uncertainties</span><span class="p">(</span>
+        <span class="n">phasespace_samples</span><span class="p">,</span>
+        <span class="n">e_0</span><span class="p">,</span>
+        <span class="n">energy_range</span>
+    <span class="p">)</span>
+
+    <span class="n">energy_x</span><span class="p">,</span> <span class="n">dn_de_y0</span> <span class="o">=</span> <span class="n">plot_sens_spectrum_figure</span><span class="p">(</span>
+        <span class="n">sigma_bg</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="p">,</span> <span class="n">t_obs_est</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">a_eff_interpol</span><span class="p">,</span> <span class="n">n_points_to_plot</span><span class="o">=</span><span class="n">n_points_to_plot</span><span class="p">,</span> <span class="n">e_0</span><span class="o">=</span><span class="n">e_0</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;k:&#39;</span>
+        <span class="p">)</span>
+    <span class="n">__a</span><span class="p">,</span> <span class="n">dn_de_y1</span> <span class="o">=</span> <span class="n">plot_sens_spectrum_figure</span><span class="p">(</span>
+        <span class="n">sigma_bg</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="p">,</span> <span class="n">t_obs_est</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">a_eff_interpol</span><span class="p">,</span> <span class="n">n_points_to_plot</span><span class="o">=</span><span class="n">n_points_to_plot</span><span class="p">,</span> <span class="n">e_0</span><span class="o">=</span><span class="n">e_0</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;k&#39;</span>
+        <span class="p">)</span>
+    <span class="n">__a</span><span class="p">,</span> <span class="n">dn_de_y2</span> <span class="o">=</span> <span class="n">plot_sens_spectrum_figure</span><span class="p">(</span>
+        <span class="n">sigma_bg</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="p">,</span> <span class="n">t_obs_est</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">a_eff_interpol</span><span class="p">,</span> <span class="n">n_points_to_plot</span><span class="o">=</span><span class="n">n_points_to_plot</span><span class="p">,</span> <span class="n">e_0</span><span class="o">=</span><span class="n">e_0</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;k:&#39;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># correct the title time to detection</span>
+    <span class="n">median_string_num</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0:3.3e}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t_obs_est</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="mf">3600.</span><span class="p">)</span>
+    <span class="n">plus_string_num</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0:3.3e}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">((</span><span class="n">t_obs_est</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">-</span><span class="n">t_obs_est</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mf">3600.</span><span class="p">)</span>
+    <span class="n">minus_string_num</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0:3.3e}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">((</span><span class="n">t_obs_est</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">t_obs_est</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="mf">3600.</span><span class="p">)</span>
+
+    <span class="n">plusminus_string</span> <span class="o">=</span> <span class="p">(</span><span class="sa">r</span><span class="s1">&#39;t$_</span><span class="si">{est}</span><span class="s1">$ = (&#39;</span> <span class="o">+</span>
+                        <span class="n">median_string_num</span> <span class="o">+</span>
+                        <span class="s1">&#39; +&#39;</span> <span class="o">+</span>
+                        <span class="n">plus_string_num</span> <span class="o">+</span>
+                        <span class="s1">&#39; -&#39;</span> <span class="o">+</span>
+                        <span class="n">minus_string_num</span> <span class="o">+</span>
+                        <span class="s1">&#39;) h&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Int. Sp. Excl. Zone, &#39;</span> <span class="o">+</span> <span class="n">plusminus_string</span><span class="p">)</span>
+    <span class="n">dn_de_ys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">dn_de_y0</span><span class="p">,</span> <span class="n">dn_de_y1</span><span class="p">,</span> <span class="n">dn_de_y2</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">spectrum_figure</span><span class="p">,</span> <span class="n">energy_x</span><span class="p">,</span> <span class="n">dn_de_ys</span></div>
+
+
+<div class="viewcode-block" id="plot_predict_contours_from_phasespace_parameters"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.plot_predict_contours_from_phasespace_parameters">[docs]</a><span class="k">def</span> <span class="nf">plot_predict_contours_from_phasespace_parameters</span><span class="p">(</span>
+        <span class="n">f_0</span><span class="p">,</span>
+        <span class="n">df_0</span><span class="p">,</span>
+        <span class="n">gamma</span><span class="p">,</span>
+        <span class="n">dgamma</span><span class="p">,</span>
+        <span class="n">n_samples</span><span class="o">=</span><span class="mi">100000</span>
+        <span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This function draws contours from phase space parameters</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">random_data</span> <span class="o">=</span> <span class="n">get_phasespace_samples</span><span class="p">(</span>
+        <span class="n">f_0</span><span class="p">,</span>
+        <span class="n">df_0</span><span class="p">,</span>
+        <span class="n">gamma</span><span class="p">,</span>
+        <span class="n">dgamma</span><span class="p">,</span>
+        <span class="n">n_samples</span><span class="o">=</span><span class="n">n_samples</span>
+        <span class="p">)</span>
+    <span class="n">plot_contours_from_sample</span><span class="p">(</span><span class="n">random_data</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_phasespace_samples"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.get_phasespace_samples">[docs]</a><span class="k">def</span> <span class="nf">get_phasespace_samples</span><span class="p">(</span>
+        <span class="n">f_0</span><span class="p">,</span>
+        <span class="n">df_0</span><span class="p">,</span>
+        <span class="n">gamma</span><span class="p">,</span>
+        <span class="n">dgamma</span><span class="p">,</span>
+        <span class="n">n_samples</span><span class="p">,</span>
+        <span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Function to return a sample from the phase space according to</span>
+<span class="sd">    the given parameters and parameter uncertainties</span>
+<span class="sd">    assuming there can only be::</span>
+
+<span class="sd">        f_0 &gt; 0</span>
+<span class="sd">        gamma &lt; 0</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">mean</span> <span class="o">=</span> <span class="p">[</span><span class="n">f_0</span><span class="o">*</span><span class="mf">1e12</span><span class="p">,</span> <span class="n">gamma</span><span class="p">]</span>  <span class="c1"># scale f_0, later downscale again</span>
+    <span class="c1"># diagonal covariance</span>
+    <span class="n">cov</span> <span class="o">=</span> <span class="p">[[</span><span class="n">df_0</span><span class="o">*</span><span class="mf">1e12</span><span class="o">*</span><span class="n">df_0</span><span class="o">*</span><span class="mf">1e12</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="n">dgamma</span><span class="o">*</span><span class="n">dgamma</span><span class="p">]]</span>
+    <span class="n">random_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">cov</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">random_data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">random_data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="mf">1e12</span>
+
+    <span class="c1"># truncate to physical values</span>
+    <span class="n">random_data</span> <span class="o">=</span> <span class="n">random_data</span><span class="p">[</span><span class="n">random_data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># f_0</span>
+    <span class="n">random_data</span> <span class="o">=</span> <span class="n">random_data</span><span class="p">[</span><span class="n">random_data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># gamma</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">random_data</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">n_samples</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span>
+              <span class="s1">&#39;less than 50 percent of the sample from the highest density&#39;</span> <span class="o">+</span>
+              <span class="s1">&#39;confidence interval in the physical region f_0&gt;0 &amp;&amp; Gamma&lt;0&#39;</span> <span class="o">+</span>
+              <span class="s1">&#39;-&gt; time to detection is uncertain/ source may be undetectable&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">random_data</span><span class="p">[:</span><span class="n">n_samples</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="get_t_obs_samples"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.get_t_obs_samples">[docs]</a><span class="k">def</span> <span class="nf">get_t_obs_samples</span><span class="p">(</span>
+        <span class="n">sigma_bg</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="p">,</span>
+        <span class="n">f_0</span><span class="p">,</span>
+        <span class="n">df_0</span><span class="p">,</span>
+        <span class="n">gamma</span><span class="p">,</span>
+        <span class="n">dgamma</span><span class="p">,</span>
+        <span class="n">e_0</span><span class="p">,</span>
+        <span class="n">a_eff_interpol</span><span class="p">,</span>
+        <span class="n">n_samples</span><span class="o">=</span><span class="mi">100000</span><span class="p">,</span>
+        <span class="n">thinning</span><span class="o">=</span><span class="mf">1.</span><span class="o">/</span><span class="mf">400.</span>
+        <span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Function to calculate samples of the time to detection</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">phasespace_samples</span> <span class="o">=</span> <span class="n">get_phasespace_samples</span><span class="p">(</span>
+            <span class="n">f_0</span><span class="p">,</span>
+            <span class="n">df_0</span><span class="p">,</span>
+            <span class="n">gamma</span><span class="p">,</span>
+            <span class="n">dgamma</span><span class="p">,</span>
+            <span class="n">n_samples</span>
+            <span class="p">)</span>
+
+    <span class="n">t_obs_samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="n">t_obs_li_ma_criterion</span><span class="p">(</span>
+            <span class="n">point</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">effective_area_averaged_flux</span><span class="p">(</span>
+                <span class="n">point</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">e_0</span><span class="p">,</span>
+                <span class="n">a_eff_interpol</span>
+            <span class="p">),</span>
+            <span class="n">sigma_bg</span><span class="p">,</span>
+            <span class="n">alpha</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">point</span>
+        <span class="ow">in</span> <span class="n">phasespace_samples</span><span class="p">[:(</span><span class="nb">int</span><span class="p">(</span><span class="n">n_samples</span><span class="o">*</span><span class="n">thinning</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+        <span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">t_obs_samples</span></div>
+
+
+<div class="viewcode-block" id="get_t_obs_est_from_samples"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.get_t_obs_est_from_samples">[docs]</a><span class="k">def</span> <span class="nf">get_t_obs_est_from_samples</span><span class="p">(</span>
+        <span class="n">t_obs_samples</span><span class="p">,</span>
+        <span class="n">lower_percentile</span><span class="o">=</span><span class="mf">16.</span><span class="p">,</span>
+        <span class="n">upper_percentile</span><span class="o">=</span><span class="mf">84.</span>
+        <span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Function to calculate the asymmetrical 68% CI</span>
+<span class="sd">    from a sample of times to detection</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">t_obs_est</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">t_obs_samples</span><span class="p">,</span> <span class="n">lower_percentile</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">t_obs_samples</span><span class="p">,</span> <span class="mf">50.</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">t_obs_samples</span><span class="p">,</span> <span class="n">upper_percentile</span><span class="p">),</span>
+        <span class="p">])</span>
+    <span class="k">return</span> <span class="n">t_obs_est</span></div>
+
+
+<div class="viewcode-block" id="get_sensitive_energy_figure"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.get_sensitive_energy_figure">[docs]</a><span class="k">def</span> <span class="nf">get_sensitive_energy_figure</span><span class="p">(</span><span class="n">a_eff_interpol</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Get a plot showing the sensitive energy</span>
+<span class="sd">    given the effective area a_eff_interpol</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">figure</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+
+    <span class="n">gammas</span><span class="p">,</span> <span class="n">e_sens</span> <span class="o">=</span> <span class="n">plot_sensitive_energy</span><span class="p">(</span><span class="n">a_eff_interpol</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">figure</span><span class="p">,</span> <span class="n">gammas</span><span class="p">,</span> <span class="n">e_sens</span></div>
+
+
+<div class="viewcode-block" id="get_effective_area_figure"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.get_effective_area_figure">[docs]</a><span class="k">def</span> <span class="nf">get_effective_area_figure</span><span class="p">(</span><span class="n">a_eff_interpol</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Get a plot showing the effective area</span>
+<span class="sd">    referenced by a_eff_interpol</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">figure</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+
+    <span class="n">plot_effective_area</span><span class="p">(</span><span class="n">a_eff_interpol</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">figure</span></div>
+
+
+<div class="viewcode-block" id="get_energy_range"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.get_energy_range">[docs]</a><span class="k">def</span> <span class="nf">get_energy_range</span><span class="p">(</span><span class="n">a_eff_interpol</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Get the definition energy range of the effective area</span>
+<span class="sd">    for integration and plotting purposes.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="n">a_eff_interpol</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">*</span><span class="mf">0.999</span><span class="p">,</span>
+        <span class="n">a_eff_interpol</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">*</span><span class="mf">1.001</span>
+        <span class="p">]))</span></div>
+
+
+<div class="viewcode-block" id="get_f_0_gamma_limits"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.get_f_0_gamma_limits">[docs]</a><span class="k">def</span> <span class="nf">get_f_0_gamma_limits</span><span class="p">(</span><span class="n">f_0</span><span class="p">,</span> <span class="n">gamma</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Get a nice box power law phase space box for plotting</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">f_0_limits</span> <span class="o">=</span> <span class="p">[</span><span class="n">f_0</span><span class="o">*</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">f_0</span><span class="o">*</span><span class="mf">1.9</span><span class="p">]</span>
+    <span class="n">gamma_limits</span> <span class="o">=</span> <span class="p">[</span><span class="n">gamma</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="n">gamma</span><span class="o">+</span><span class="mf">1.</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">gamma_limits</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">gamma_limits</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="k">return</span> <span class="n">f_0_limits</span><span class="p">,</span> <span class="n">gamma_limits</span></div>
+
+
+<div class="viewcode-block" id="get_f_0_gamma_mesh"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.get_f_0_gamma_mesh">[docs]</a><span class="k">def</span> <span class="nf">get_f_0_gamma_mesh</span><span class="p">(</span><span class="n">f_0_limits</span><span class="p">,</span> <span class="n">gamma_limits</span><span class="p">,</span> <span class="n">pixels_per_line</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Generate two numpy.meshgrids for 2D plotting</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">f_0_stepsize</span> <span class="o">=</span> <span class="p">(</span><span class="n">f_0_limits</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">f_0_limits</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="n">pixels_per_line</span>
+    <span class="n">gamma_stepsize</span> <span class="o">=</span> <span class="p">(</span><span class="n">gamma_limits</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">gamma_limits</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="n">pixels_per_line</span>
+
+    <span class="n">f_0_stepsize</span> <span class="o">=</span> <span class="n">f_0_stepsize</span><span class="o">+</span><span class="n">f_0_stepsize</span><span class="o">*</span><span class="mf">1e-9</span>
+    <span class="n">gamma_stepsize</span> <span class="o">=</span> <span class="n">gamma_stepsize</span><span class="o">+</span><span class="n">gamma_stepsize</span><span class="o">*</span><span class="mf">1e-9</span>
+
+    <span class="n">f_0_buf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">f_0_limits</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">f_0_limits</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">f_0_stepsize</span><span class="p">)</span>
+    <span class="n">gamma_buf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">gamma_limits</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">gamma_limits</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="n">gamma_stepsize</span><span class="p">)</span>
+    <span class="n">f_0_mesh</span><span class="p">,</span> <span class="n">gamma_mesh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">f_0_buf</span><span class="p">,</span> <span class="n">gamma_buf</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">f_0_mesh</span><span class="p">,</span> <span class="n">gamma_mesh</span></div>
+
+
+<div class="viewcode-block" id="get_ul_f_0"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.get_ul_f_0">[docs]</a><span class="k">def</span> <span class="nf">get_ul_f_0</span><span class="p">(</span><span class="n">t_obs</span><span class="p">,</span> <span class="n">lambda_lim</span><span class="p">,</span> <span class="n">a_eff_interpol</span><span class="p">,</span> <span class="n">e_0</span><span class="p">,</span> <span class="n">gamma</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Calculate f_0 on the exclusion line from solving the boundary condition</span>
+<span class="sd">    lambda_lim = lambda_s</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">lambda_lim</span> <span class="o">/</span> <span class="n">t_obs</span> <span class="o">/</span> <span class="n">effective_area_averaged_flux</span><span class="p">(</span>
+        <span class="n">gamma</span><span class="p">,</span> <span class="n">e_0</span><span class="p">,</span> <span class="n">a_eff_interpol</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="sensitive_energy"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.sensitive_energy">[docs]</a><span class="k">def</span> <span class="nf">sensitive_energy</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">a_eff_interpol</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Function returning the sensitive energy, given gamma</span>
+<span class="sd">    and the effective area</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="n">ln_energy_weighted</span><span class="p">(</span>
+            <span class="n">gamma</span><span class="p">,</span>
+            <span class="n">a_eff_interpol</span>
+        <span class="p">)</span><span class="o">/</span><span class="n">effective_area_averaged_flux</span><span class="p">(</span>
+            <span class="n">gamma</span><span class="p">,</span>
+            <span class="mf">1.</span><span class="p">,</span>
+            <span class="n">a_eff_interpol</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">mu</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_useful_e_0"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.get_useful_e_0">[docs]</a><span class="k">def</span> <span class="nf">get_useful_e_0</span><span class="p">(</span><span class="n">a_eff_interpol</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This function will try to yield a useful e_0</span>
+<span class="sd">    value for anchoring the power law on.</span>
+<span class="sd">    This is calculated from the effective area definition range</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="c1"># round to the next order of magnitude</span>
+    <span class="n">log10_e_0_suggestion</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">mean_log10_energy</span><span class="p">(</span><span class="n">a_eff_interpol</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="n">log10_e_0_suggestion</span><span class="p">)</span> <span class="o">/</span> <span class="mi">10</span></div>
+
+
+<div class="viewcode-block" id="get_gamma_from_sensitive_energy"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.get_gamma_from_sensitive_energy">[docs]</a><span class="k">def</span> <span class="nf">get_gamma_from_sensitive_energy</span><span class="p">(</span><span class="n">E_sens</span><span class="p">,</span> <span class="n">a_eff_interpol</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    numerical inverse of the sensitive energy</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">gamma_min</span> <span class="o">=</span> <span class="o">-</span><span class="mf">30.</span>
+    <span class="n">gamma_max</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.05</span>
+
+    <span class="n">gamma_num</span> <span class="o">=</span> <span class="n">brentq</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">sensitive_energy</span><span class="p">(</span>
+            <span class="n">gamma</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
+            <span class="n">a_eff_interpol</span><span class="o">=</span><span class="n">a_eff_interpol</span>
+            <span class="p">)</span> <span class="o">-</span> <span class="n">E_sens</span>
+        <span class="p">),</span> <span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">gamma_num</span></div>
+
+
+<div class="viewcode-block" id="effective_area_averaged_flux"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.effective_area_averaged_flux">[docs]</a><span class="k">def</span> <span class="nf">effective_area_averaged_flux</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">e_0</span><span class="p">,</span> <span class="n">a_eff_interpol</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    I define this in the paper as c(gamma)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">energy_range</span> <span class="o">=</span> <span class="n">get_energy_range</span><span class="p">(</span><span class="n">a_eff_interpol</span><span class="p">)</span>
+    <span class="n">integrand</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">power_law</span><span class="p">(</span>
+        <span class="n">x</span><span class="p">,</span>
+        <span class="n">f_0</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span>
+        <span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">,</span>
+        <span class="n">e_0</span><span class="o">=</span><span class="n">e_0</span>
+        <span class="p">)</span><span class="o">*</span><span class="n">a_eff_interpol</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span>
+        <span class="n">integrand</span><span class="p">,</span>
+        <span class="n">energy_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">energy_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">limit</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>
+        <span class="n">full_output</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">points</span><span class="o">=</span><span class="p">[</span><span class="n">energy_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">energy_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">10</span><span class="p">]</span>
+        <span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="ln_energy_weighted"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.ln_energy_weighted">[docs]</a><span class="k">def</span> <span class="nf">ln_energy_weighted</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">a_eff_interpol</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    For calculating the sensitive energy.</span>
+<span class="sd">    This function gets the unnormalized mean ln(energy)</span>
+<span class="sd">    integrated over the power law flux and sensitive area</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">f_0</span> <span class="o">=</span> <span class="mf">1.</span>
+    <span class="n">energy_range</span> <span class="o">=</span> <span class="n">get_energy_range</span><span class="p">(</span><span class="n">a_eff_interpol</span><span class="p">)</span>
+    <span class="n">integrand</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">power_law</span><span class="p">(</span>
+        <span class="n">x</span><span class="p">,</span>
+        <span class="n">f_0</span><span class="o">=</span><span class="n">f_0</span><span class="p">,</span>
+        <span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">,</span>
+        <span class="n">e_0</span><span class="o">=</span><span class="mf">1.</span>
+        <span class="p">)</span><span class="o">*</span><span class="n">a_eff_interpol</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span>
+        <span class="n">integrand</span><span class="p">,</span>
+        <span class="n">energy_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">energy_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">limit</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>
+        <span class="n">full_output</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">points</span><span class="o">=</span><span class="p">[</span><span class="n">energy_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">energy_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">10</span><span class="p">]</span>
+        <span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="mean_log10_energy"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.mean_log10_energy">[docs]</a><span class="k">def</span> <span class="nf">mean_log10_energy</span><span class="p">(</span><span class="n">a_eff_interpol</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    For calculating mean of the log10 of the energy</span>
+<span class="sd">    over the effective area, to estimate a useful e_0</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">energy_range</span> <span class="o">=</span> <span class="n">get_energy_range</span><span class="p">(</span><span class="n">a_eff_interpol</span><span class="p">)</span>
+    <span class="n">integrand_numerator</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">a_eff_interpol</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">integrand_denominator</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">a_eff_interpol</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+    <span class="n">numerator</span> <span class="o">=</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span>
+        <span class="n">integrand_numerator</span><span class="p">,</span>
+        <span class="n">energy_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">energy_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">limit</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>
+        <span class="n">full_output</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">points</span><span class="o">=</span><span class="p">[</span><span class="n">energy_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">energy_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">10</span><span class="p">]</span>
+        <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">denominator</span> <span class="o">=</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span>
+        <span class="n">integrand_denominator</span><span class="p">,</span>
+        <span class="n">energy_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">energy_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">limit</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>
+        <span class="n">full_output</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">points</span><span class="o">=</span><span class="p">[</span><span class="n">energy_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">energy_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">10</span><span class="p">]</span>
+        <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">numerator</span><span class="o">/</span><span class="n">denominator</span></div>
+
+
+<div class="viewcode-block" id="power_law"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.power_law">[docs]</a><span class="k">def</span> <span class="nf">power_law</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="n">f_0</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">e_0</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    A power law function as defined in the paper</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">f_0</span><span class="o">*</span><span class="p">(</span><span class="n">energy</span><span class="o">/</span><span class="n">e_0</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">gamma</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="plot_effective_area"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.plot_effective_area">[docs]</a><span class="k">def</span> <span class="nf">plot_effective_area</span><span class="p">(</span><span class="n">a_eff_interpol</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    fill a plot with the effective energy from the supplied</span>
+<span class="sd">    interpolated data</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">a_eff_interpol</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+    <span class="n">stop</span> <span class="o">=</span> <span class="n">a_eff_interpol</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    <span class="n">samples</span> <span class="o">=</span> <span class="mi">1000</span>
+
+    <span class="n">energy_samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">samples</span><span class="p">)</span>
+    <span class="n">area_samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="n">a_eff_interpol</span><span class="p">(</span><span class="n">energy</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">energy</span>
+        <span class="ow">in</span> <span class="n">energy_samples</span>
+        <span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">energy_samples</span><span class="p">),</span> <span class="n">area_samples</span><span class="o">/</span><span class="mf">10000.</span><span class="p">,</span>
+             <span class="n">style</span><span class="p">,</span>
+             <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">loglog</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Effective Area&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Energy / TeV&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;A$_</span><span class="si">{eff}</span><span class="s1">$ / m$^2$&#39;</span><span class="p">)</span>
+    <span class="k">return</span></div>
+
+
+<div class="viewcode-block" id="plot_sensitive_energy"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.plot_sensitive_energy">[docs]</a><span class="k">def</span> <span class="nf">plot_sensitive_energy</span><span class="p">(</span><span class="n">a_eff_interpol</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    fill a sensitive energy plot figure</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">gamma_range</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">5.</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">]</span>
+    <span class="n">stepsize</span> <span class="o">=</span> <span class="mf">0.1</span>
+    <span class="n">gammas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">gamma_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">gamma_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">stepsize</span><span class="p">,</span> <span class="n">stepsize</span><span class="p">)</span>
+    <span class="n">e_sens</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">sensitive_energy</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">a_eff_interpol</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">gammas</span><span class="p">])</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">gammas</span><span class="p">,</span> <span class="n">e_sens</span><span class="p">,</span> <span class="s1">&#39;k&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;sensitive energy E$_</span><span class="si">{sens}</span><span class="s1">$($</span><span class="se">\\</span><span class="s1">Gamma$)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">semilogy</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;E$_</span><span class="si">{sens}</span><span class="s1">$ / TeV&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;$</span><span class="se">\\</span><span class="s1">Gamma$&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">gammas</span><span class="p">,</span> <span class="n">e_sens</span></div>
+
+
+<div class="viewcode-block" id="plot_ul_spectrum_figure"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.plot_ul_spectrum_figure">[docs]</a><span class="k">def</span> <span class="nf">plot_ul_spectrum_figure</span><span class="p">(</span>
+        <span class="n">t_obs</span><span class="p">,</span> <span class="n">lambda_lim</span><span class="p">,</span> <span class="n">a_eff_interpol</span><span class="p">,</span> <span class="n">e_0</span><span class="p">,</span> <span class="n">n_points_to_plot</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+        <span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    fill a ul spectrum figure with the integral spectral exclusion zone plot</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">gamma_range</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">]</span>
+
+    <span class="n">energy_range</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">sensitive_energy</span><span class="p">(</span><span class="n">gamma_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">a_eff_interpol</span><span class="p">),</span>
+        <span class="n">sensitive_energy</span><span class="p">(</span><span class="n">gamma_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">a_eff_interpol</span><span class="p">)]</span>
+    <span class="n">energy_x</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">energy_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">energy_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+            <span class="n">n_points_to_plot</span>
+        <span class="p">)</span>
+    <span class="n">dn_de_y</span> <span class="o">=</span> <span class="p">[</span><span class="n">integral_spectral_exclusion_zone</span><span class="p">(</span>
+                <span class="n">energy</span><span class="p">,</span>
+                <span class="n">lambda_lim</span><span class="p">,</span>
+                <span class="n">a_eff_interpol</span><span class="p">,</span>
+                <span class="n">t_obs</span><span class="p">,</span>
+                <span class="n">e_0</span>
+                <span class="p">)</span>
+               <span class="k">for</span> <span class="n">energy</span>
+               <span class="ow">in</span> <span class="n">energy_x</span>
+               <span class="p">]</span>
+    <span class="n">dn_de_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dn_de_y</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">energy_x</span><span class="p">,</span> <span class="n">dn_de_y</span><span class="p">,</span> <span class="n">fmt</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">loglog</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Integral Spectral Exclusion Zone, t&#39;</span> <span class="o">+</span>
+              <span class="p">(</span><span class="s1">&#39;=</span><span class="si">{0:1.1e}</span><span class="s1"> h&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t_obs</span><span class="o">/</span><span class="mf">3600.</span><span class="p">)))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;E / TeV&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;dN/dE / [(cm$^2$ s TeV)$^{-1}$]&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">energy_x</span><span class="p">,</span> <span class="n">dn_de_y</span></div>
+
+
+<div class="viewcode-block" id="plot_sens_spectrum_figure"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.plot_sens_spectrum_figure">[docs]</a><span class="k">def</span> <span class="nf">plot_sens_spectrum_figure</span><span class="p">(</span>
+        <span class="n">sigma_bg</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">t_obs</span><span class="p">,</span> <span class="n">a_eff_interpol</span><span class="p">,</span> <span class="n">e_0</span><span class="p">,</span> <span class="n">n_points_to_plot</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+        <span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    fill a spectrum figure with the sensitivity</span>
+<span class="sd">    integral spectral exclusion zone plot</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">energy_x</span><span class="p">,</span> <span class="n">dn_de_y</span> <span class="o">=</span> <span class="n">plot_ul_spectrum_figure</span><span class="p">(</span>
+        <span class="n">t_obs</span><span class="p">,</span>
+        <span class="n">sigma_lim_li_ma_criterion</span><span class="p">(</span><span class="n">sigma_bg</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">t_obs</span><span class="p">)</span><span class="o">*</span><span class="n">t_obs</span><span class="p">,</span>
+        <span class="n">a_eff_interpol</span><span class="p">,</span>
+        <span class="n">e_0</span><span class="o">=</span><span class="n">e_0</span><span class="p">,</span>
+        <span class="n">n_points_to_plot</span><span class="o">=</span><span class="n">n_points_to_plot</span><span class="p">,</span>
+        <span class="n">fmt</span><span class="o">=</span><span class="n">fmt</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">energy_x</span><span class="p">,</span> <span class="n">dn_de_y</span></div>
+
+
+<div class="viewcode-block" id="plot_lambda_s_mesh"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.plot_lambda_s_mesh">[docs]</a><span class="k">def</span> <span class="nf">plot_lambda_s_mesh</span><span class="p">(</span>
+        <span class="n">t_obs</span><span class="p">,</span>
+        <span class="n">lambda_lim</span><span class="p">,</span>
+        <span class="n">a_eff_interpol</span><span class="p">,</span>
+        <span class="n">e_0</span><span class="p">,</span>
+        <span class="n">f_0_mesh</span><span class="p">,</span>
+        <span class="n">gamma_mesh</span><span class="p">,</span>
+        <span class="n">n_levels</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span>
+        <span class="n">linestyles</span><span class="o">=</span><span class="s1">&#39;dashed&#39;</span><span class="p">,</span>
+        <span class="n">linewidths</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">colors</span><span class="o">=</span><span class="s1">&#39;k&#39;</span>
+        <span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Function to get the lambda_s plot in the phase space of the power law</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">pixels_per_line</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">f_0_mesh</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">lambda_s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">t_obs</span><span class="o">*</span><span class="n">f_0_mesh</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">effective_area_averaged_flux</span><span class="p">(</span>
+        <span class="n">gamma_mesh</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">],</span>
+        <span class="n">e_0</span><span class="o">=</span><span class="n">e_0</span><span class="p">,</span>
+        <span class="n">a_eff_interpol</span><span class="o">=</span><span class="n">a_eff_interpol</span>
+        <span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">pixels_per_line</span><span class="p">)]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">pixels_per_line</span><span class="p">)])</span>
+
+    <span class="n">levels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">lambda_lim</span><span class="o">/</span><span class="p">((</span><span class="mf">1.5</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">n_levels</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">-</span><span class="n">i</span><span class="p">))</span>
+                       <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_levels</span><span class="p">)])</span>
+    <span class="n">limit_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">levels</span> <span class="o">==</span> <span class="n">lambda_lim</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">linestyles</span> <span class="o">=</span> <span class="p">[</span><span class="n">linestyles</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_levels</span><span class="p">)]</span>
+    <span class="n">linestyles</span><span class="p">[</span><span class="n">limit_index</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;solid&#39;</span>
+    <span class="n">linewidths</span> <span class="o">=</span> <span class="p">[</span><span class="n">linewidths</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_levels</span><span class="p">)]</span>
+    <span class="n">linewidths</span><span class="p">[</span><span class="n">limit_index</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+
+    <span class="n">cset</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span>
+        <span class="n">f_0_mesh</span><span class="p">,</span>
+        <span class="n">gamma_mesh</span><span class="p">,</span>
+        <span class="n">lambda_s</span><span class="p">,</span>
+        <span class="n">levels</span><span class="o">=</span><span class="n">levels</span><span class="p">,</span>
+        <span class="n">linestyles</span><span class="o">=</span><span class="n">linestyles</span><span class="p">,</span>
+        <span class="n">linewidths</span><span class="o">=</span><span class="n">linewidths</span><span class="p">,</span>
+        <span class="n">colors</span><span class="o">=</span><span class="n">colors</span>
+        <span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">clabel</span><span class="p">(</span><span class="n">cset</span><span class="p">,</span> <span class="n">inline</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%1.1f</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span>
+        <span class="s1">&#39;signal counts per </span><span class="si">{0:1.1e}</span><span class="s1"> h, E$_0$=</span><span class="si">{1:1.1e}</span><span class="s1"> TeV assuming power law&#39;</span><span class="o">.</span>
+        <span class="nb">format</span><span class="p">(</span><span class="n">t_obs</span><span class="o">/</span><span class="mf">3600.</span><span class="p">,</span> <span class="n">e_0</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;$f_0$ / [(cm$^2$ s TeV)$^{-1}$]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;$</span><span class="se">\\</span><span class="s1">Gamma$&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">lambda_s</span></div>
+
+
+<div class="viewcode-block" id="plot_t_obs_mesh"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.plot_t_obs_mesh">[docs]</a><span class="k">def</span> <span class="nf">plot_t_obs_mesh</span><span class="p">(</span>
+        <span class="n">sigma_bg</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="p">,</span>
+        <span class="n">a_eff_interpol</span><span class="p">,</span>
+        <span class="n">e_0</span><span class="p">,</span>
+        <span class="n">f_0_mesh</span><span class="p">,</span>
+        <span class="n">gamma_mesh</span><span class="p">,</span>
+        <span class="n">n_levels</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span>
+        <span class="n">linestyles</span><span class="o">=</span><span class="s1">&#39;dashed&#39;</span><span class="p">,</span>
+        <span class="n">linewidths</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">colors</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span>
+        <span class="n">t_obs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This function puts the times until detection into</span>
+<span class="sd">    a plot in phase space (f_0, Gamma) for given telescope</span>
+<span class="sd">    analysis parameters</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">pixels_per_line</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">f_0_mesh</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">t_obs_s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span>
+        <span class="n">t_obs_li_ma_criterion</span><span class="p">(</span>
+            <span class="c1"># calculate the sigma_s from c(Gamma)*f_0</span>
+            <span class="n">f_0_mesh</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">*</span>
+            <span class="n">effective_area_averaged_flux</span><span class="p">(</span>
+                <span class="n">gamma_mesh</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">],</span>
+                <span class="n">e_0</span><span class="p">,</span>
+                <span class="n">a_eff_interpol</span><span class="p">),</span>
+            <span class="n">sigma_bg</span><span class="p">,</span>
+            <span class="n">alpha</span><span class="p">)</span><span class="o">/</span><span class="mf">3600.</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">pixels_per_line</span><span class="p">)]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">pixels_per_line</span><span class="p">)])</span>
+
+    <span class="c1"># if there is no predefined info about t_obs</span>
+    <span class="c1"># in prediction mode -&gt; get it from the t_obs mesh</span>
+    <span class="n">print_solid</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="n">t_obs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">print_solid</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">t_obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">t_obs_s</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">t_obs</span> <span class="o">=</span> <span class="n">t_obs</span><span class="o">/</span><span class="mf">3600.</span>
+
+    <span class="n">levels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">t_obs</span><span class="o">/</span><span class="p">((</span><span class="mf">1.5</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">n_levels</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">-</span><span class="n">i</span><span class="p">))</span>
+                       <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_levels</span><span class="p">)])</span>
+    <span class="n">limit_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">levels</span><span class="p">,</span> <span class="n">t_obs</span><span class="p">)</span>
+        <span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">linestyles</span> <span class="o">=</span> <span class="p">[</span><span class="n">linestyles</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_levels</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="n">print_solid</span><span class="p">:</span>
+        <span class="n">linestyles</span><span class="p">[</span><span class="n">limit_index</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;solid&#39;</span>
+    <span class="n">linewidths</span> <span class="o">=</span> <span class="p">[</span><span class="n">linewidths</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_levels</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="n">print_solid</span><span class="p">:</span>
+        <span class="n">linewidths</span><span class="p">[</span><span class="n">limit_index</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+
+    <span class="n">cset</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span>
+        <span class="n">f_0_mesh</span><span class="p">,</span>
+        <span class="n">gamma_mesh</span><span class="p">,</span>
+        <span class="n">t_obs_s</span><span class="p">,</span>
+        <span class="n">levels</span><span class="o">=</span><span class="n">levels</span><span class="p">,</span>
+        <span class="n">linestyles</span><span class="o">=</span><span class="n">linestyles</span><span class="p">,</span>
+        <span class="n">linewidths</span><span class="o">=</span><span class="n">linewidths</span><span class="p">,</span>
+        <span class="n">colors</span><span class="o">=</span><span class="n">colors</span>
+        <span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">clabel</span><span class="p">(</span><span class="n">cset</span><span class="p">,</span> <span class="n">inline</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%1.1e</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span>
+        <span class="s1">&#39;time to detection in h, E$_0$=</span><span class="si">{0:1.1e}</span><span class="s1"> TeV assuming power law&#39;</span><span class="o">.</span>
+        <span class="nb">format</span><span class="p">(</span><span class="n">e_0</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;$f_0$ / [(cm$^2$ s TeV)$^{-1}$]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;$</span><span class="se">\\</span><span class="s1">Gamma$&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">t_obs_s</span></div>
+
+
+<div class="viewcode-block" id="plot_contours_from_sample"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.plot_contours_from_sample">[docs]</a><span class="k">def</span> <span class="nf">plot_contours_from_sample</span><span class="p">(</span>
+        <span class="n">samples</span><span class="p">,</span>
+        <span class="n">levels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">smooth</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This function draws a contour plot into the current</span>
+<span class="sd">    figure showing selected highest density 2D confidence intervals</span>
+<span class="sd">    The standard is: 1 sigma, 2 sigma, 3 sigma in 2D</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="c1"># one, two, and three sigma in 2D</span>
+    <span class="k">if</span> <span class="n">levels</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">levels</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">3.1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+
+    <span class="n">axis</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">x_lim</span> <span class="o">=</span> <span class="n">axis</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()</span>
+    <span class="n">y_lim</span> <span class="o">=</span> <span class="n">axis</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()</span>
+
+    <span class="n">corner</span><span class="o">.</span><span class="n">hist2d</span><span class="p">(</span>
+        <span class="n">samples</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="n">samples</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="n">plot_datapoints</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">plot_density</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">no_fill_contours</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">ax</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span>
+        <span class="n">smooth</span><span class="o">=</span><span class="n">smooth</span><span class="p">,</span>
+        <span class="n">levels</span><span class="o">=</span><span class="n">levels</span><span class="p">)</span>
+
+    <span class="n">axis</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">x_lim</span><span class="p">)</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">y_lim</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="plot_power_law"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.plot_power_law">[docs]</a><span class="k">def</span> <span class="nf">plot_power_law</span><span class="p">(</span>
+        <span class="n">f_0</span><span class="p">,</span>
+        <span class="n">gamma</span><span class="p">,</span>
+        <span class="n">e_0</span><span class="p">,</span>
+        <span class="n">energy_range</span><span class="p">,</span>
+        <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;k:&#39;</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="n">alpha_plot</span><span class="o">=</span><span class="mf">0.7</span>
+        <span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This function generates a power law plot in</span>
+<span class="sd">    the current figure</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">e_x</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">energy_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">energy_range</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">+</span><span class="mf">0.05</span><span class="p">,</span>
+        <span class="mf">0.05</span><span class="p">)</span>
+    <span class="n">e_y</span> <span class="o">=</span> <span class="n">power_law</span><span class="p">(</span><span class="n">e_x</span><span class="p">,</span> <span class="n">f_0</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">e_0</span><span class="o">=</span><span class="n">e_0</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">e_x</span><span class="p">,</span> <span class="n">e_y</span><span class="p">,</span> <span class="n">fmt</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha_plot</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">loglog</span><span class="p">()</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;E / TeV&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;dN/dE / [(cm$^2$ s TeV)$^{-1}$]&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="plot_source_emission_spectrum_with_uncertainties"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.plot_source_emission_spectrum_with_uncertainties">[docs]</a><span class="k">def</span> <span class="nf">plot_source_emission_spectrum_with_uncertainties</span><span class="p">(</span>
+        <span class="n">phasespace_samples</span><span class="p">,</span>
+        <span class="n">e_0</span><span class="p">,</span>
+        <span class="n">energy_range</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+        <span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This function draws 100 power laws as an illustration for</span>
+<span class="sd">    the source emission uncertainty</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">f0_mc</span><span class="p">,</span> <span class="n">gamma_mc</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span>
+        <span class="n">phasespace_samples</span><span class="p">,</span>
+        <span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">84</span><span class="p">],</span>
+        <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">f_0</span><span class="p">,</span> <span class="n">gamma</span> <span class="ow">in</span> <span class="n">phasespace_samples</span><span class="p">[</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">phasespace_samples</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+            <span class="p">]:</span>
+        <span class="n">plot_power_law</span><span class="p">(</span>
+            <span class="n">f_0</span><span class="p">,</span>
+            <span class="n">gamma</span><span class="p">,</span>
+            <span class="n">e_0</span><span class="o">=</span><span class="n">e_0</span><span class="p">,</span>
+            <span class="n">energy_range</span><span class="o">=</span><span class="n">energy_range</span><span class="p">,</span>
+            <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span>
+            <span class="n">alpha_plot</span><span class="o">=</span><span class="mf">0.03</span>
+            <span class="p">)</span>
+
+    <span class="n">plot_power_law</span><span class="p">(</span>
+        <span class="n">f0_mc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">gamma_mc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">e_0</span><span class="o">=</span><span class="n">e_0</span><span class="p">,</span>
+        <span class="n">energy_range</span><span class="o">=</span><span class="n">energy_range</span><span class="p">,</span>
+        <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span>
+        <span class="n">alpha_plot</span><span class="o">=</span><span class="mf">0.8</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="integral_spectral_exclusion_zone"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.integral_spectral_exclusion_zone">[docs]</a><span class="k">def</span> <span class="nf">integral_spectral_exclusion_zone</span><span class="p">(</span>
+        <span class="n">energy</span><span class="p">,</span> <span class="n">lambda_lim</span><span class="p">,</span> <span class="n">a_eff_interpol</span><span class="p">,</span> <span class="n">t_obs</span><span class="p">,</span> <span class="n">e_0</span>
+        <span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This function returns the integral spectral exclusion zone value</span>
+<span class="sd">    at one point in energy for given lambda_lim, a_eff_interpol, and t_obs</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">f_0</span><span class="p">,</span> <span class="n">gamma</span> <span class="o">=</span> <span class="n">integral_spectral_exclusion_zone_parameters</span><span class="p">(</span>
+        <span class="n">energy</span><span class="p">,</span>
+        <span class="n">lambda_lim</span><span class="p">,</span>
+        <span class="n">a_eff_interpol</span><span class="p">,</span>
+        <span class="n">t_obs</span><span class="p">,</span>
+        <span class="n">e_0</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">power_law</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="n">f_0</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">e_0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="integral_spectral_exclusion_zone_parameters"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.integral_spectral_exclusion_zone_parameters">[docs]</a><span class="k">def</span> <span class="nf">integral_spectral_exclusion_zone_parameters</span><span class="p">(</span>
+        <span class="n">energy</span><span class="p">,</span>
+        <span class="n">lambda_lim</span><span class="p">,</span>
+        <span class="n">a_eff_interpol</span><span class="p">,</span>
+        <span class="n">t_obs</span><span class="p">,</span>
+        <span class="n">e_0</span><span class="o">=</span><span class="mf">1.</span>
+        <span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This function calculates the integral spectral exclusion zone parameters</span>
+<span class="sd">    f_0 and gamma at at a given energy in order to draw it into spectral plots.</span>
+
+<span class="sd">    It is done by utilizing the Lagrangian results from the paper.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">gamma_calc</span> <span class="o">=</span> <span class="n">get_gamma_from_sensitive_energy</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="n">a_eff_interpol</span><span class="p">)</span>
+    <span class="n">f_0_calc</span> <span class="o">=</span> <span class="n">get_ul_f_0</span><span class="p">(</span><span class="n">t_obs</span><span class="p">,</span> <span class="n">lambda_lim</span><span class="p">,</span> <span class="n">a_eff_interpol</span><span class="p">,</span> <span class="n">e_0</span><span class="p">,</span> <span class="n">gamma_calc</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">f_0_calc</span><span class="p">,</span> <span class="n">gamma_calc</span></div>
+
+
+<div class="viewcode-block" id="t_obs_li_ma_criterion"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.t_obs_li_ma_criterion">[docs]</a><span class="k">def</span> <span class="nf">t_obs_li_ma_criterion</span><span class="p">(</span><span class="n">sigma_s</span><span class="p">,</span> <span class="n">sigma_bg</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">5.</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This function calculates the limit average time to detection,</span>
+<span class="sd">    given a signal rate, background rate, and alpha</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">estimated_rate_in_off</span> <span class="o">=</span> <span class="n">sigma_bg</span> <span class="o">/</span> <span class="n">alpha</span>
+    <span class="n">estimated_rate_in_on</span> <span class="o">=</span> <span class="n">sigma_s</span> <span class="o">+</span> <span class="n">sigma_bg</span>
+
+    <span class="n">t_obs_min</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">t_obs_max</span> <span class="o">=</span> <span class="mf">36e16</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">t_obs</span> <span class="o">=</span> <span class="n">brentq</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span>
+            <span class="n">li_ma_significance</span><span class="p">(</span>
+                <span class="n">estimated_rate_in_on</span><span class="o">*</span><span class="n">x</span><span class="p">,</span>
+                <span class="n">estimated_rate_in_off</span><span class="o">*</span><span class="n">x</span><span class="p">,</span>
+                <span class="n">alpha</span>
+                <span class="p">)</span> <span class="o">-</span> <span class="n">threshold</span>
+            <span class="p">),</span> <span class="n">t_obs_min</span><span class="p">,</span> <span class="n">t_obs_max</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The time to detection could not be calculated. &#39;</span>
+                         <span class="s1">&#39;This can be the case when sigma_bg is overestimated.&#39;</span>
+                         <span class="s1">&#39; Please check that your stated background rate&#39;</span>
+                         <span class="s1">&#39; is actually given as: sigma_bg / s&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">t_obs</span></div>
+
+
+<div class="viewcode-block" id="sigma_lim_li_ma_criterion"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.sigma_lim_li_ma_criterion">[docs]</a><span class="k">def</span> <span class="nf">sigma_lim_li_ma_criterion</span><span class="p">(</span><span class="n">sigma_bg</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">t_obs</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">5.</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This function returns the limit signal count rate</span>
+<span class="sd">    using the LiMa criterion</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">estimated_bg_counts_in_off</span> <span class="o">=</span> <span class="n">sigma_bg</span> <span class="o">*</span> <span class="n">t_obs</span> <span class="o">/</span> <span class="n">alpha</span>
+    <span class="n">estimated_bg_counts_in_on</span> <span class="o">=</span> <span class="n">sigma_bg</span> <span class="o">*</span> <span class="n">t_obs</span>
+
+    <span class="n">sigma_lim_min</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">sigma_lim_max</span> <span class="o">=</span> <span class="mf">1e5</span>  <span class="c1"># more than 100k gamma / s is likely unrealistic</span>
+
+    <span class="n">sigma_lim</span> <span class="o">=</span> <span class="n">brentq</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span>
+        <span class="n">li_ma_significance</span><span class="p">(</span>
+            <span class="n">x</span><span class="o">*</span><span class="n">t_obs</span> <span class="o">+</span> <span class="n">estimated_bg_counts_in_on</span><span class="p">,</span>
+            <span class="n">estimated_bg_counts_in_off</span><span class="p">,</span>
+            <span class="n">alpha</span>
+            <span class="p">)</span> <span class="o">-</span> <span class="n">threshold</span>
+        <span class="p">),</span> <span class="n">sigma_lim_min</span><span class="p">,</span> <span class="n">sigma_lim_max</span><span class="p">)</span>
+
+    <span class="c1"># implement the low statistics limit which most authors use:</span>
+    <span class="c1">#   &quot;at least 10 excess counts&quot;</span>
+    <span class="k">if</span> <span class="n">sigma_lim</span><span class="o">*</span><span class="n">t_obs</span> <span class="o">&lt;</span> <span class="mf">10.</span><span class="p">:</span>
+        <span class="n">sigma_lim</span> <span class="o">=</span> <span class="mf">10.</span><span class="o">/</span><span class="n">t_obs</span>
+
+    <span class="k">return</span> <span class="n">sigma_lim</span></div>
+
+
+<div class="viewcode-block" id="li_ma_significance"><a class="viewcode-back" href="../gamma_limits_sensitivity.html#gamma_limits_sensitivity.li_ma_significance">[docs]</a><span class="k">def</span> <span class="nf">li_ma_significance</span><span class="p">(</span><span class="n">n_on</span><span class="p">,</span> <span class="n">n_off</span><span class="p">,</span> <span class="n">alpha</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    A function to calculate the significance, according to :</span>
+
+<span class="sd">    Li, T-P., and Y-Q. Ma.</span>
+<span class="sd">    &quot;Analysis methods for results in gamma-ray astronomy.&quot;</span>
+<span class="sd">    The Astrophysical Journal 272 (1983): 317-324.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">n_on</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">n_on</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ndmin</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">n_off</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">n_off</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ndmin</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">invalid</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">):</span>
+        <span class="n">p_on</span> <span class="o">=</span> <span class="n">n_on</span> <span class="o">/</span> <span class="p">(</span><span class="n">n_on</span> <span class="o">+</span> <span class="n">n_off</span><span class="p">)</span>
+        <span class="n">p_off</span> <span class="o">=</span> <span class="n">n_off</span> <span class="o">/</span> <span class="p">(</span><span class="n">n_on</span> <span class="o">+</span> <span class="n">n_off</span><span class="p">)</span>
+
+        <span class="n">t1</span> <span class="o">=</span> <span class="n">n_on</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(((</span><span class="mi">1</span> <span class="o">+</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">/</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">*</span> <span class="n">p_on</span><span class="p">)</span>
+        <span class="n">t2</span> <span class="o">=</span> <span class="n">n_off</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">((</span><span class="mi">1</span> <span class="o">+</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">*</span> <span class="n">p_off</span><span class="p">)</span>
+
+        <span class="n">ts</span> <span class="o">=</span> <span class="p">(</span><span class="n">t1</span> <span class="o">+</span> <span class="n">t2</span><span class="p">)</span>
+        <span class="n">significance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">ts</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">significance</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">significance</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">significance</span><span class="p">[</span><span class="n">n_on</span> <span class="o">&lt;</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">n_off</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">return</span> <span class="n">significance</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020-2021, Johannes Buchner
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,584 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>gamma_limits_sensitivity package &mdash; poissonregime 0.5.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="_static/icon.ico"/>
+  
+  
+  
+    <link rel="canonical" href="https://johannesbuchner.github.io/poissonregime/gamma_limits_sensitivity.html"/>
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="poissonregime module" href="poissonregime.html" />
+    <link rel="prev" title="API" href="modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> poissonregime
+          
+
+          
+            
+            <img src="_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">API</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">gamma_limits_sensitivity package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-gamma_limits_sensitivity">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="poissonregime.html">poissonregime module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="issues.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="history.html">Release Notes</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">poissonregime</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content style-external-links">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="modules.html">API</a> &raquo;</li>
+        
+      <li>gamma_limits_sensitivity package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="gamma-limits-sensitivity-package">
+<h1>gamma_limits_sensitivity package<a class="headerlink" href="#gamma-limits-sensitivity-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-gamma_limits_sensitivity">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-gamma_limits_sensitivity" title="Permalink to this headline">¶</a></h2>
+<p>This is the hard working code in order to calculate ULs, sensitivities,
+and time to detections.</p>
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.upper_limit">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">upper_limit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">t_obs</span></em>, <em class="sig-param"><span class="n">lambda_lim</span></em>, <em class="sig-param"><span class="n">a_eff</span></em>, <em class="sig-param"><span class="n">e_0</span></em>, <em class="sig-param"><span class="n">plot_resolution</span><span class="o">=</span><span class="default_value">30</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#upper_limit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.upper_limit" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function generates all plots for the command ‘ul’ from
+input data. It takes:</p>
+<p>t_obs   in seconds
+lambda_lim   from Rolke, Knoetig, …
+a_eff   A path to the file with effective area over true energy after cuts
+plot_resolution    a parameter for running tests faster</p>
+<p>It returns a dictionary with results.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.sensitivity">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">sensitivity</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sigma_bg</span></em>, <em class="sig-param"><span class="n">alpha</span></em>, <em class="sig-param"><span class="n">t_obs</span></em>, <em class="sig-param"><span class="n">a_eff</span></em>, <em class="sig-param"><span class="n">e_0</span></em>, <em class="sig-param"><span class="n">plot_resolution</span><span class="o">=</span><span class="default_value">30</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#sensitivity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.sensitivity" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function generates all plots for the command ‘sens’ from
+input data. It takes:</p>
+<p>sigma_bg    in 1/seconds
+alpha   on/off exposure ratio
+t_obs   observation time in seconds
+a_eff   A path to the file with effective area over true energy after cuts</p>
+<p>It returns a dictionary with results.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.predict">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sigma_bg</span></em>, <em class="sig-param"><span class="n">alpha</span></em>, <em class="sig-param"><span class="n">f_0</span></em>, <em class="sig-param"><span class="n">df_0</span></em>, <em class="sig-param"><span class="n">gamma</span></em>, <em class="sig-param"><span class="n">dgamma</span></em>, <em class="sig-param"><span class="n">e_0</span></em>, <em class="sig-param"><span class="n">a_eff</span></em>, <em class="sig-param"><span class="n">plot_resolution</span><span class="o">=</span><span class="default_value">30</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function generates all plots for the command ‘predict’ from
+input data. It takes:</p>
+<p>sigma_bg    in 1/seconds
+alpha   on/off exposure ratio
+f_0     flux normalization in 1/(cm^2 s TeV)
+df_0    flux normalization error 1 sigma 1/(cm^2 s TeV)
+gamma   power law index (&lt;0)
+dgamma  power law index error 1 sigma
+e_0     reference energy in TeV
+a_eff   A path to the file with effective area over true energy after cuts</p>
+<p>It returns a dictionary with results.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.get_effective_area_test_relative_paths">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">get_effective_area_test_relative_paths</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#get_effective_area_test_relative_paths"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.get_effective_area_test_relative_paths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function to get the paths of stored effective areas</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.get_effective_area">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">get_effective_area</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a_eff_path</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#get_effective_area"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.get_effective_area" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to get the interpolated effective area
+from a file path</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.prepare_phasespace_meshes">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">prepare_phasespace_meshes</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">t_obs</span></em>, <em class="sig-param"><span class="n">lambda_lim</span></em>, <em class="sig-param"><span class="n">a_eff_interpol</span></em>, <em class="sig-param"><span class="n">e_0</span></em>, <em class="sig-param"><span class="n">pixels_per_line</span></em>, <em class="sig-param"><span class="n">gamma</span><span class="o">=</span><span class="default_value">- 2.6</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#prepare_phasespace_meshes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.prepare_phasespace_meshes" title="Permalink to this definition">¶</a></dt>
+<dd><p>determine parameter plot ranges</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.get_ul_phasespace_figure">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">get_ul_phasespace_figure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">t_obs</span></em>, <em class="sig-param"><span class="n">lambda_lim</span></em>, <em class="sig-param"><span class="n">a_eff_interpol</span></em>, <em class="sig-param"><span class="n">e_0</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">pixels_per_line</span><span class="o">=</span><span class="default_value">30</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#get_ul_phasespace_figure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.get_ul_phasespace_figure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to generate the plot of average counts
+lambda_s in the phase space of the power law.
+It will indicate the limit lambda_lim in the same plot.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.get_ul_spectrum_figure">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">get_ul_spectrum_figure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">t_obs</span></em>, <em class="sig-param"><span class="n">lambda_lim</span></em>, <em class="sig-param"><span class="n">a_eff_interpol</span></em>, <em class="sig-param"><span class="n">e_0</span></em>, <em class="sig-param"><span class="n">n_points_to_plot</span><span class="o">=</span><span class="default_value">21</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#get_ul_spectrum_figure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.get_ul_spectrum_figure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the integral spectral exclusion zone for the ‘ul’ command</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.get_sens_phasespace_figure">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">get_sens_phasespace_figure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sigma_bg</span></em>, <em class="sig-param"><span class="n">alpha</span></em>, <em class="sig-param"><span class="n">t_obs</span></em>, <em class="sig-param"><span class="n">a_eff_interpol</span></em>, <em class="sig-param"><span class="n">e_0</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">pixels_per_line</span><span class="o">=</span><span class="default_value">30</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#get_sens_phasespace_figure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.get_sens_phasespace_figure" title="Permalink to this definition">¶</a></dt>
+<dd><p>This command produces a phase space figure and fills it with
+time to detection for given telescope parameters</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.get_sens_spectrum_figure">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">get_sens_spectrum_figure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sigma_bg</span></em>, <em class="sig-param"><span class="n">alpha</span></em>, <em class="sig-param"><span class="n">t_obs</span></em>, <em class="sig-param"><span class="n">a_eff_interpol</span></em>, <em class="sig-param"><span class="n">e_0</span></em>, <em class="sig-param"><span class="n">n_points_to_plot</span><span class="o">=</span><span class="default_value">21</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#get_sens_spectrum_figure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.get_sens_spectrum_figure" title="Permalink to this definition">¶</a></dt>
+<dd><p>This command produces a spectrum figure and fills it with the
+integral spectral exclusion zone for a given observation
+time and telescope parameters</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.get_predict_phasespace_figure">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">get_predict_phasespace_figure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sigma_bg</span></em>, <em class="sig-param"><span class="n">alpha</span></em>, <em class="sig-param"><span class="n">f_0</span></em>, <em class="sig-param"><span class="n">df_0</span></em>, <em class="sig-param"><span class="n">gamma</span></em>, <em class="sig-param"><span class="n">dgamma</span></em>, <em class="sig-param"><span class="n">e_0</span></em>, <em class="sig-param"><span class="n">a_eff_interpol</span></em>, <em class="sig-param"><span class="n">pixels_per_line</span><span class="o">=</span><span class="default_value">30</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#get_predict_phasespace_figure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.get_predict_phasespace_figure" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function creates a figure and fills it with
+relevant phase space functions, such as 2D confidence
+intervals representing the source emission and
+time to detection</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.get_predict_spectrum_figure">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">get_predict_spectrum_figure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sigma_bg</span></em>, <em class="sig-param"><span class="n">alpha</span></em>, <em class="sig-param"><span class="n">t_obs_est</span></em>, <em class="sig-param"><span class="n">f_0</span></em>, <em class="sig-param"><span class="n">df_0</span></em>, <em class="sig-param"><span class="n">gamma</span></em>, <em class="sig-param"><span class="n">dgamma</span></em>, <em class="sig-param"><span class="n">e_0</span></em>, <em class="sig-param"><span class="n">a_eff_interpol</span></em>, <em class="sig-param"><span class="n">n_points_to_plot</span><span class="o">=</span><span class="default_value">21</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#get_predict_spectrum_figure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.get_predict_spectrum_figure" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function generates a spectral plot from
+precalculated times of observation until detection
+for a specific telescope analysis</p>
+<p>It shows the integral spectral exclusion zone
+for the median time until detection, and the
+integral spectral exclusion zones for half that time
+and double that time.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.plot_predict_contours_from_phasespace_parameters">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">plot_predict_contours_from_phasespace_parameters</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">f_0</span></em>, <em class="sig-param"><span class="n">df_0</span></em>, <em class="sig-param"><span class="n">gamma</span></em>, <em class="sig-param"><span class="n">dgamma</span></em>, <em class="sig-param"><span class="n">n_samples</span><span class="o">=</span><span class="default_value">100000</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#plot_predict_contours_from_phasespace_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.plot_predict_contours_from_phasespace_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function draws contours from phase space parameters</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.get_phasespace_samples">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">get_phasespace_samples</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">f_0</span></em>, <em class="sig-param"><span class="n">df_0</span></em>, <em class="sig-param"><span class="n">gamma</span></em>, <em class="sig-param"><span class="n">dgamma</span></em>, <em class="sig-param"><span class="n">n_samples</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#get_phasespace_samples"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.get_phasespace_samples" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to return a sample from the phase space according to
+the given parameters and parameter uncertainties
+assuming there can only be:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">f_0</span> <span class="o">&gt;</span> <span class="mi">0</span>
+<span class="n">gamma</span> <span class="o">&lt;</span> <span class="mi">0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.get_t_obs_samples">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">get_t_obs_samples</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sigma_bg</span></em>, <em class="sig-param"><span class="n">alpha</span></em>, <em class="sig-param"><span class="n">f_0</span></em>, <em class="sig-param"><span class="n">df_0</span></em>, <em class="sig-param"><span class="n">gamma</span></em>, <em class="sig-param"><span class="n">dgamma</span></em>, <em class="sig-param"><span class="n">e_0</span></em>, <em class="sig-param"><span class="n">a_eff_interpol</span></em>, <em class="sig-param"><span class="n">n_samples</span><span class="o">=</span><span class="default_value">100000</span></em>, <em class="sig-param"><span class="n">thinning</span><span class="o">=</span><span class="default_value">0.0025</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#get_t_obs_samples"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.get_t_obs_samples" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to calculate samples of the time to detection</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.get_t_obs_est_from_samples">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">get_t_obs_est_from_samples</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">t_obs_samples</span></em>, <em class="sig-param"><span class="n">lower_percentile</span><span class="o">=</span><span class="default_value">16.0</span></em>, <em class="sig-param"><span class="n">upper_percentile</span><span class="o">=</span><span class="default_value">84.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#get_t_obs_est_from_samples"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.get_t_obs_est_from_samples" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to calculate the asymmetrical 68% CI
+from a sample of times to detection</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.get_sensitive_energy_figure">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">get_sensitive_energy_figure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a_eff_interpol</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#get_sensitive_energy_figure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.get_sensitive_energy_figure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a plot showing the sensitive energy
+given the effective area a_eff_interpol</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.get_effective_area_figure">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">get_effective_area_figure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a_eff_interpol</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#get_effective_area_figure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.get_effective_area_figure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a plot showing the effective area
+referenced by a_eff_interpol</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.get_energy_range">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">get_energy_range</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a_eff_interpol</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#get_energy_range"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.get_energy_range" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the definition energy range of the effective area
+for integration and plotting purposes.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.get_f_0_gamma_limits">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">get_f_0_gamma_limits</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">f_0</span></em>, <em class="sig-param"><span class="n">gamma</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#get_f_0_gamma_limits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.get_f_0_gamma_limits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a nice box power law phase space box for plotting</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.get_f_0_gamma_mesh">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">get_f_0_gamma_mesh</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">f_0_limits</span></em>, <em class="sig-param"><span class="n">gamma_limits</span></em>, <em class="sig-param"><span class="n">pixels_per_line</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#get_f_0_gamma_mesh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.get_f_0_gamma_mesh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate two numpy.meshgrids for 2D plotting</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.get_ul_f_0">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">get_ul_f_0</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">t_obs</span></em>, <em class="sig-param"><span class="n">lambda_lim</span></em>, <em class="sig-param"><span class="n">a_eff_interpol</span></em>, <em class="sig-param"><span class="n">e_0</span></em>, <em class="sig-param"><span class="n">gamma</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#get_ul_f_0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.get_ul_f_0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate f_0 on the exclusion line from solving the boundary condition
+lambda_lim = lambda_s</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.sensitive_energy">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">sensitive_energy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gamma</span></em>, <em class="sig-param"><span class="n">a_eff_interpol</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#sensitive_energy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.sensitive_energy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function returning the sensitive energy, given gamma
+and the effective area</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.get_useful_e_0">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">get_useful_e_0</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a_eff_interpol</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#get_useful_e_0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.get_useful_e_0" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will try to yield a useful e_0
+value for anchoring the power law on.
+This is calculated from the effective area definition range</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.get_gamma_from_sensitive_energy">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">get_gamma_from_sensitive_energy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">E_sens</span></em>, <em class="sig-param"><span class="n">a_eff_interpol</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#get_gamma_from_sensitive_energy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.get_gamma_from_sensitive_energy" title="Permalink to this definition">¶</a></dt>
+<dd><p>numerical inverse of the sensitive energy</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.effective_area_averaged_flux">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">effective_area_averaged_flux</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gamma</span></em>, <em class="sig-param"><span class="n">e_0</span></em>, <em class="sig-param"><span class="n">a_eff_interpol</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#effective_area_averaged_flux"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.effective_area_averaged_flux" title="Permalink to this definition">¶</a></dt>
+<dd><p>I define this in the paper as c(gamma)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.ln_energy_weighted">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">ln_energy_weighted</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gamma</span></em>, <em class="sig-param"><span class="n">a_eff_interpol</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#ln_energy_weighted"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.ln_energy_weighted" title="Permalink to this definition">¶</a></dt>
+<dd><p>For calculating the sensitive energy.
+This function gets the unnormalized mean ln(energy)
+integrated over the power law flux and sensitive area</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.mean_log10_energy">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">mean_log10_energy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a_eff_interpol</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#mean_log10_energy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.mean_log10_energy" title="Permalink to this definition">¶</a></dt>
+<dd><p>For calculating mean of the log10 of the energy
+over the effective area, to estimate a useful e_0</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.power_law">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">power_law</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">energy</span></em>, <em class="sig-param"><span class="n">f_0</span></em>, <em class="sig-param"><span class="n">gamma</span></em>, <em class="sig-param"><span class="n">e_0</span><span class="o">=</span><span class="default_value">1.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#power_law"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.power_law" title="Permalink to this definition">¶</a></dt>
+<dd><p>A power law function as defined in the paper</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.plot_effective_area">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">plot_effective_area</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a_eff_interpol</span></em>, <em class="sig-param"><span class="n">style</span><span class="o">=</span><span class="default_value">'k'</span></em>, <em class="sig-param"><span class="n">label</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#plot_effective_area"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.plot_effective_area" title="Permalink to this definition">¶</a></dt>
+<dd><p>fill a plot with the effective energy from the supplied
+interpolated data</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.plot_sensitive_energy">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">plot_sensitive_energy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a_eff_interpol</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#plot_sensitive_energy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.plot_sensitive_energy" title="Permalink to this definition">¶</a></dt>
+<dd><p>fill a sensitive energy plot figure</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.plot_ul_spectrum_figure">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">plot_ul_spectrum_figure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">t_obs</span></em>, <em class="sig-param"><span class="n">lambda_lim</span></em>, <em class="sig-param"><span class="n">a_eff_interpol</span></em>, <em class="sig-param"><span class="n">e_0</span></em>, <em class="sig-param"><span class="n">n_points_to_plot</span></em>, <em class="sig-param"><span class="n">fmt</span><span class="o">=</span><span class="default_value">'k'</span></em>, <em class="sig-param"><span class="n">label</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#plot_ul_spectrum_figure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.plot_ul_spectrum_figure" title="Permalink to this definition">¶</a></dt>
+<dd><p>fill a ul spectrum figure with the integral spectral exclusion zone plot</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.plot_sens_spectrum_figure">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">plot_sens_spectrum_figure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sigma_bg</span></em>, <em class="sig-param"><span class="n">alpha</span></em>, <em class="sig-param"><span class="n">t_obs</span></em>, <em class="sig-param"><span class="n">a_eff_interpol</span></em>, <em class="sig-param"><span class="n">e_0</span></em>, <em class="sig-param"><span class="n">n_points_to_plot</span></em>, <em class="sig-param"><span class="n">fmt</span><span class="o">=</span><span class="default_value">'k'</span></em>, <em class="sig-param"><span class="n">label</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#plot_sens_spectrum_figure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.plot_sens_spectrum_figure" title="Permalink to this definition">¶</a></dt>
+<dd><p>fill a spectrum figure with the sensitivity
+integral spectral exclusion zone plot</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.plot_lambda_s_mesh">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">plot_lambda_s_mesh</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">t_obs</span></em>, <em class="sig-param"><span class="n">lambda_lim</span></em>, <em class="sig-param"><span class="n">a_eff_interpol</span></em>, <em class="sig-param"><span class="n">e_0</span></em>, <em class="sig-param"><span class="n">f_0_mesh</span></em>, <em class="sig-param"><span class="n">gamma_mesh</span></em>, <em class="sig-param"><span class="n">n_levels</span><span class="o">=</span><span class="default_value">9</span></em>, <em class="sig-param"><span class="n">linestyles</span><span class="o">=</span><span class="default_value">'dashed'</span></em>, <em class="sig-param"><span class="n">linewidths</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">colors</span><span class="o">=</span><span class="default_value">'k'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#plot_lambda_s_mesh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.plot_lambda_s_mesh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to get the lambda_s plot in the phase space of the power law</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.plot_t_obs_mesh">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">plot_t_obs_mesh</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sigma_bg</span></em>, <em class="sig-param"><span class="n">alpha</span></em>, <em class="sig-param"><span class="n">a_eff_interpol</span></em>, <em class="sig-param"><span class="n">e_0</span></em>, <em class="sig-param"><span class="n">f_0_mesh</span></em>, <em class="sig-param"><span class="n">gamma_mesh</span></em>, <em class="sig-param"><span class="n">n_levels</span><span class="o">=</span><span class="default_value">9</span></em>, <em class="sig-param"><span class="n">linestyles</span><span class="o">=</span><span class="default_value">'dashed'</span></em>, <em class="sig-param"><span class="n">linewidths</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">colors</span><span class="o">=</span><span class="default_value">'k'</span></em>, <em class="sig-param"><span class="n">t_obs</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#plot_t_obs_mesh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.plot_t_obs_mesh" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function puts the times until detection into
+a plot in phase space (f_0, Gamma) for given telescope
+analysis parameters</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.plot_contours_from_sample">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">plot_contours_from_sample</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">samples</span></em>, <em class="sig-param"><span class="n">levels</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">smooth</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#plot_contours_from_sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.plot_contours_from_sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function draws a contour plot into the current
+figure showing selected highest density 2D confidence intervals
+The standard is: 1 sigma, 2 sigma, 3 sigma in 2D</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.plot_power_law">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">plot_power_law</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">f_0</span></em>, <em class="sig-param"><span class="n">gamma</span></em>, <em class="sig-param"><span class="n">e_0</span></em>, <em class="sig-param"><span class="n">energy_range</span></em>, <em class="sig-param"><span class="n">fmt</span><span class="o">=</span><span class="default_value">'k:'</span></em>, <em class="sig-param"><span class="n">label</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">alpha_plot</span><span class="o">=</span><span class="default_value">0.7</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#plot_power_law"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.plot_power_law" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function generates a power law plot in
+the current figure</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.plot_source_emission_spectrum_with_uncertainties">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">plot_source_emission_spectrum_with_uncertainties</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phasespace_samples</span></em>, <em class="sig-param"><span class="n">e_0</span></em>, <em class="sig-param"><span class="n">energy_range</span></em>, <em class="sig-param"><span class="n">label</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#plot_source_emission_spectrum_with_uncertainties"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.plot_source_emission_spectrum_with_uncertainties" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function draws 100 power laws as an illustration for
+the source emission uncertainty</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.integral_spectral_exclusion_zone">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">integral_spectral_exclusion_zone</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">energy</span></em>, <em class="sig-param"><span class="n">lambda_lim</span></em>, <em class="sig-param"><span class="n">a_eff_interpol</span></em>, <em class="sig-param"><span class="n">t_obs</span></em>, <em class="sig-param"><span class="n">e_0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#integral_spectral_exclusion_zone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.integral_spectral_exclusion_zone" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function returns the integral spectral exclusion zone value
+at one point in energy for given lambda_lim, a_eff_interpol, and t_obs</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.integral_spectral_exclusion_zone_parameters">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">integral_spectral_exclusion_zone_parameters</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">energy</span></em>, <em class="sig-param"><span class="n">lambda_lim</span></em>, <em class="sig-param"><span class="n">a_eff_interpol</span></em>, <em class="sig-param"><span class="n">t_obs</span></em>, <em class="sig-param"><span class="n">e_0</span><span class="o">=</span><span class="default_value">1.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#integral_spectral_exclusion_zone_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.integral_spectral_exclusion_zone_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function calculates the integral spectral exclusion zone parameters
+f_0 and gamma at at a given energy in order to draw it into spectral plots.</p>
+<p>It is done by utilizing the Lagrangian results from the paper.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.t_obs_li_ma_criterion">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">t_obs_li_ma_criterion</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sigma_s</span></em>, <em class="sig-param"><span class="n">sigma_bg</span></em>, <em class="sig-param"><span class="n">alpha</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">5.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#t_obs_li_ma_criterion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.t_obs_li_ma_criterion" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function calculates the limit average time to detection,
+given a signal rate, background rate, and alpha</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.sigma_lim_li_ma_criterion">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">sigma_lim_li_ma_criterion</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sigma_bg</span></em>, <em class="sig-param"><span class="n">alpha</span></em>, <em class="sig-param"><span class="n">t_obs</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">5.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#sigma_lim_li_ma_criterion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.sigma_lim_li_ma_criterion" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function returns the limit signal count rate
+using the LiMa criterion</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gamma_limits_sensitivity.li_ma_significance">
+<code class="sig-prename descclassname">gamma_limits_sensitivity.</code><code class="sig-name descname">li_ma_significance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_on</span></em>, <em class="sig-param"><span class="n">n_off</span></em>, <em class="sig-param"><span class="n">alpha</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gamma_limits_sensitivity.html#li_ma_significance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gamma_limits_sensitivity.li_ma_significance" title="Permalink to this definition">¶</a></dt>
+<dd><p>A function to calculate the significance, according to :</p>
+<p>Li, T-P., and Y-Q. Ma.
+“Analysis methods for results in gamma-ray astronomy.”
+The Astrophysical Journal 272 (1983): 317-324.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="poissonregime.html" class="btn btn-neutral float-right" title="poissonregime module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="modules.html" class="btn btn-neutral float-left" title="API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020-2021, Johannes Buchner
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,366 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>poissonregime &mdash; poissonregime 0.5.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../_static/icon.ico"/>
+  
+  
+  
+    <link rel="canonical" href="https://johannesbuchner.github.io/poissonregime/_modules/poissonregime.html"/>
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> poissonregime
+          
+
+          
+            
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../issues.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">Release Notes</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">poissonregime</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content style-external-links">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>poissonregime</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for poissonregime</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">poissonregime module.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">MIT License</span>
+
+<span class="sd">Copyright (c) 2021 Johannes Buchner</span>
+<span class="sd">Copyright (c) 2016 Max Ahnen</span>
+
+<span class="sd">Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="sd">of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="sd">in the Software without restriction, including without limitation the rights</span>
+<span class="sd">to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="sd">copies of the Software, and to permit persons to whom the Software is</span>
+<span class="sd">furnished to do so, subject to the following conditions:</span>
+
+<span class="sd">The above copyright notice and this permission notice shall be included in all</span>
+<span class="sd">copies or substantial portions of the Software.</span>
+
+<span class="sd">THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="sd">IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="sd">FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="sd">AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="sd">LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="sd">OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="sd">SOFTWARE.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;0.5.1&#39;</span>
+
+<span class="kn">import</span> <span class="nn">scipy.special</span>
+<span class="kn">import</span> <span class="nn">scipy.stats</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">gamma_limits_sensitivity</span> <span class="kn">import</span> <span class="n">li_ma_significance</span>
+
+<span class="c1"># This is the smallest number we can process within the numerical precision available</span>
+<span class="n">tiny</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">tiny</span>
+
+<div class="viewcode-block" id="significance_from_pvalue"><a class="viewcode-back" href="../poissonregime.html#poissonregime.significance_from_pvalue">[docs]</a><span class="k">def</span> <span class="nf">significance_from_pvalue</span><span class="p">(</span><span class="n">pvalue</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the significance (i.e., the z-score) for a given probability, i.e., the number of standard deviations (sigma)</span>
+<span class="sd">    corresponding to the probability</span>
+
+<span class="sd">    :param pvalue: input probability</span>
+<span class="sd">    :return: z-score (or significance in units of sigma)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Make sure that we can compute this score (i.e., the pvalue is not too small)</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">pvalue</span> <span class="o">&lt;=</span> <span class="n">tiny</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ArithmeticError</span><span class="p">(</span><span class="s2">&quot;One or more pvalues are too small for a significance computation.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># This is equivalent to sqrt(2) * erfinv(1 - 2 * pvalue) but faster</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">scipy</span><span class="o">.</span><span class="n">special</span><span class="o">.</span><span class="n">ndtri</span><span class="p">(</span><span class="n">pvalue</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="pvalue_from_significance"><a class="viewcode-back" href="../poissonregime.html#poissonregime.pvalue_from_significance">[docs]</a><span class="k">def</span> <span class="nf">pvalue_from_significance</span><span class="p">(</span><span class="n">zscore</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the probability for a given significance.</span>
+
+<span class="sd">    :param pvalue: z-score (or significance in units of sigma)</span>
+<span class="sd">    :return: probability</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">scipy</span><span class="o">.</span><span class="n">special</span><span class="o">.</span><span class="n">ndtr</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">zscore</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="significance"><a class="viewcode-back" href="../poissonregime.html#poissonregime.significance">[docs]</a><span class="k">def</span> <span class="nf">significance</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the significance for detecting n counts when alpha * b are expected.</span>
+<span class="sd">    If sigma=0 and k=0 (default), this is the case with no additional systematic error and the classic result</span>
+<span class="sd">    from Li &amp; Ma (1983) is used. Example::</span>
+
+<span class="sd">        significance(n, b, alpha)</span>
+
+<span class="sd">    If k&gt;0 then eq.7 from Vianello (2018) is used, which assumes that k is the upper boundary on the fractional</span>
+<span class="sd">    systematic uncertainty. Example::</span>
+<span class="sd"> </span>
+<span class="sd">        significance(n, b, alpha, k=0.1)</span>
+
+<span class="sd">    If k&lt;0, then alpha * b is assumed to have no uncertainties.</span>
+
+<span class="sd">    :param n: observed counts (can be an array)</span>
+<span class="sd">    :param b: expected background counts (can be an array)</span>
+<span class="sd">    :param alpha: ratio of the source observation efficiency and background observation efficiency</span>
+<span class="sd">        (either a float, or an array of the same shape of n)</span>
+<span class="sd">    :param k: maximum fractional systematic uncertainty expected (either a float, or an array of the same shape of n)</span>
+<span class="sd">    :return: the significance (z score) for the measurement(s)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">significance_from_pvalue</span><span class="p">(</span><span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">poisson</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">b</span><span class="p">))</span>
+
+    <span class="n">sign</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">n</span> <span class="o">&gt;=</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">b</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">sign</span> <span class="o">*</span> <span class="n">li_ma_significance</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">*</span> <span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="posterior"><a class="viewcode-back" href="../poissonregime.html#poissonregime.posterior">[docs]</a><span class="k">def</span> <span class="nf">posterior</span><span class="p">(</span><span class="n">rate</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">exposure</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the posterior of a source count rate for detecting n counts when alpha * b are expected.</span>
+
+<span class="sd">    :param rate: count rate (can be an array)</span>
+<span class="sd">    :param n: observed counts (can be an array)</span>
+<span class="sd">    :param b: expected background counts (can be an array)</span>
+<span class="sd">    :param alpha: ratio of the source observation efficiency and background observation efficiency</span>
+<span class="sd">    :param exposure: exposure time, area, volume, or similar to convert the rate to expected source counts.</span>
+<span class="sd">        (either a float, or an array of the same shape of n)</span>
+<span class="sd">    :return: the likelihood value</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">nexp</span> <span class="o">=</span> <span class="n">exposure</span> <span class="o">*</span> <span class="n">rate</span>
+    <span class="n">t_1</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">b</span> <span class="o">+</span> <span class="n">n</span>
+    <span class="n">hb</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">+</span> <span class="n">b</span>
+    <span class="n">thb</span> <span class="o">=</span> <span class="mf">1.5</span> <span class="o">+</span> <span class="n">b</span>
+    <span class="k">return</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">poisson</span><span class="o">.</span><span class="n">pmf</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="n">b</span><span class="p">,</span> <span class="n">nexp</span><span class="p">)</span> <span class="o">*</span> <span class="n">scipy</span><span class="o">.</span><span class="n">special</span><span class="o">.</span><span class="n">hyperu</span><span class="p">(</span><span class="n">hb</span><span class="p">,</span> <span class="n">t_1</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">*</span> <span class="n">nexp</span><span class="p">)</span> <span class="o">/</span> <span class="n">scipy</span><span class="o">.</span><span class="n">special</span><span class="o">.</span><span class="n">hyp2f1</span><span class="p">(</span><span class="n">hb</span><span class="p">,</span> <span class="n">t_1</span><span class="p">,</span> <span class="n">thb</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="n">alpha</span><span class="p">)</span> <span class="o">*</span> <span class="n">scipy</span><span class="o">.</span><span class="n">special</span><span class="o">.</span><span class="n">gamma</span><span class="p">(</span><span class="n">thb</span><span class="p">)</span></div>
+    <span class="c1">#return sign * li_ma_significance(n, b, alpha * (k + 1))</span>
+
+
+<div class="viewcode-block" id="uncertainties_rate"><a class="viewcode-back" href="../poissonregime.html#poissonregime.uncertainties_rate">[docs]</a><span class="k">def</span> <span class="nf">uncertainties_rate</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="n">pvalue_from_significance</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">+</span><span class="mi">1</span><span class="p">]),</span> <span class="n">exposure</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Give error bars on the number of events, given k detections.</span>
+
+<span class="sd">    :param k: number of hits, events, detections or sources.</span>
+<span class="sd">    :param q: quantile(s) to consider. 0.5 is the median, use pvalue_from_significance to convert from sigma units.</span>
+<span class="sd">    :param exposure: exposure time, area, volume, or similar to normalise to a rate.</span>
+<span class="sd">    :return: error bars on the number of events. By default, the median, lower and upper 1 sigma estimates.</span>
+
+<span class="sd">    Caveat: this assumes a uniform prior on the number of events.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">))</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">k</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;k must be integer&quot;</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">q</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">),</span> <span class="s2">&quot;Quantile must be between zero and one.&quot;</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">q</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">),</span> <span class="s2">&quot;Quantile must be between zero and one.&quot;</span>
+    <span class="k">return</span> <span class="n">scipy</span><span class="o">.</span><span class="n">special</span><span class="o">.</span><span class="n">gammainccinv</span><span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span> <span class="o">/</span> <span class="n">exposure</span></div>
+
+
+<div class="viewcode-block" id="uncertainties_fraction"><a class="viewcode-back" href="../poissonregime.html#poissonregime.uncertainties_fraction">[docs]</a><span class="k">def</span> <span class="nf">uncertainties_fraction</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="n">pvalue_from_significance</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">+</span><span class="mi">1</span><span class="p">])):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Give error bars on a fraction, given k positives out of n possible.</span>
+
+<span class="sd">    :param k: number of hits, events, detections or sources.</span>
+<span class="sd">    :param n: number of opportunities, total sample size, time bins, slots.</span>
+<span class="sd">    :param q: quantile(s) to consider. 0.5 is the median, use pvalue_from_significance to convert from sigma units.</span>
+
+<span class="sd">    :return: error bars on the fraction. By default, the median, lower and upper 1 sigma estimates.</span>
+
+<span class="sd">    See e.g., https://arxiv.org/abs/1012.0566</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">))</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">k</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;k must be integer&quot;</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">))</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">n</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;n must be integer&quot;</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">k</span><span class="o">&lt;=</span><span class="n">n</span><span class="p">),</span> <span class="s2">&quot;k must be smaller than n.&quot;</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">q</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">),</span> <span class="s2">&quot;Quantile must be between zero and one.&quot;</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">q</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">),</span> <span class="s2">&quot;Quantile must be between zero and one.&quot;</span>
+    <span class="k">return</span> <span class="n">scipy</span><span class="o">.</span><span class="n">special</span><span class="o">.</span><span class="n">betaincinv</span><span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">k</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;1 sigma quantiles:&quot;</span><span class="p">,</span> <span class="n">pvalue_from_significance</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">+</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;1 sigma:&quot;</span><span class="p">,</span> <span class="n">significance_from_pvalue</span><span class="p">(</span><span class="n">pvalue_from_significance</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">+</span><span class="mi">1</span><span class="p">])))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;rate for one of ten:&#39;</span><span class="p">,</span> <span class="n">uncertainties_fraction</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;rate for three events:&#39;</span><span class="p">,</span> <span class="n">uncertainties_rate</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;rate for no events:&#39;</span><span class="p">,</span> <span class="n">uncertainties_rate</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;significance of five events when 0.01 expected:&#39;</span><span class="p">,</span> <span class="n">significance</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">k</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span> <span class="n">significance</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">),</span> <span class="n">significance</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mf">0.1</span><span class="p">))</span>
+    <span class="n">rate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">40</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;likelihood:&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">rate</span><span class="p">,</span> <span class="n">posterior</span><span class="p">(</span><span class="n">rate</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)))</span><span class="o">.</span><span class="n">transpose</span><span class="p">())</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020-2021, Johannes Buchner
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
