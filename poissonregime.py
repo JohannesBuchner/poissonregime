@@ -88,7 +88,7 @@ def significance(n, b, alpha, k=0):
 
 def posterior(rate, n, b, alpha, exposure=1.0):
     """
-    Returns the likelihood of a source count rate for detecting n counts when alpha * b are expected.
+    Returns the posterior of a source count rate for detecting n counts when alpha * b are expected.
 
     :param rate: count rate (can be an array)
     :param n: observed counts (can be an array)
