@@ -498,7 +498,8 @@ def get_phasespace_samples(
     '''
     Function to return a sample from the phase space according to
     the given parameters and parameter uncertainties
-    assuming there can only be:
+    assuming there can only be::
+
         f_0 > 0
         gamma < 0
     '''

@@ -1,4 +1,5 @@
 """
+poissonregime module.
 """
 
 """
@@ -41,6 +42,7 @@ def significance_from_pvalue(pvalue):
     """
     Return the significance (i.e., the z-score) for a given probability, i.e., the number of standard deviations (sigma)
     corresponding to the probability
+
     :param pvalue: input probability
     :return: z-score (or significance in units of sigma)
     """
@@ -55,6 +57,7 @@ def significance_from_pvalue(pvalue):
 def pvalue_from_significance(zscore):
     """
     Return the probability for a given significance.
+
     :param pvalue: z-score (or significance in units of sigma)
     :return: probability
     """
@@ -64,18 +67,21 @@ def significance(n, b, alpha, k=0):
     """
     Returns the significance for detecting n counts when alpha * b are expected.
     If sigma=0 and k=0 (default), this is the case with no additional systematic error and the classic result
-    from Li & Ma (1983) is used. Example:
-        > significance(n, b, alpha)
+    from Li & Ma (1983) is used. Example::
+
+        significance(n, b, alpha)
+
     If k>0 then eq.7 from Vianello (2018) is used, which assumes that k is the upper boundary on the fractional
-    systematic uncertainty. Example:
-        > significance(n, b, alpha, k=0.1)
+    systematic uncertainty. Example::
+ 
+        significance(n, b, alpha, k=0.1)
 
     If k<0, then alpha * b is assumed to have no uncertainties.
 
     :param n: observed counts (can be an array)
     :param b: expected background counts (can be an array)
     :param alpha: ratio of the source observation efficiency and background observation efficiency
-    (either a float, or an array of the same shape of n)
+        (either a float, or an array of the same shape of n)
     :param k: maximum fractional systematic uncertainty expected (either a float, or an array of the same shape of n)
     :return: the significance (z score) for the measurement(s)
     """
@@ -95,7 +101,7 @@ def posterior(rate, n, b, alpha, exposure=1.0):
     :param b: expected background counts (can be an array)
     :param alpha: ratio of the source observation efficiency and background observation efficiency
     :param exposure: exposure time, area, volume, or similar to convert the rate to expected source counts.
-    (either a float, or an array of the same shape of n)
+        (either a float, or an array of the same shape of n)
     :return: the likelihood value
     """
 
@@ -114,7 +120,6 @@ def uncertainties_rate(k, q=pvalue_from_significance([0, -1, +1]), exposure=1.0)
     :param k: number of hits, events, detections or sources.
     :param q: quantile(s) to consider. 0.5 is the median, use pvalue_from_significance to convert from sigma units.
     :param exposure: exposure time, area, volume, or similar to normalise to a rate.
-
     :return: error bars on the number of events. By default, the median, lower and upper 1 sigma estimates.
 
     Caveat: this assumes a uniform prior on the number of events.

@@ -1,6 +1,6 @@
-=========
+=============
 poissonregime
-=========
+=============
 
 Poisson error bars for low count statistics, detection significances.
 
