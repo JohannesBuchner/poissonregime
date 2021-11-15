@@ -24,8 +24,10 @@ This package can answer the following questions:
 * Given k detected objects, what are the uncertainties on the true number of objects? (`poissonregime.uncertainties_rate`)
 * Given k "hits" out of a sample of n tries, what is the fraction and its uncertainty? (`poissonregime.uncertainties_fraction`)
 * What is the significance of k detections, given that I expect B background events? (`poissonregime.significance`)
+
   * what if I measure the background events from counts in a "off" region?
   * what if I have additional systematic uncertainty?
+
 * What is the probability distribution on the event rate, given a measured background rate? (`poissonregime.posterior`)
 
 You can help by testing poissonregime and reporting issues. Code contributions are welcome.

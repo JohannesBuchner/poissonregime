@@ -66,15 +66,16 @@ def pvalue_from_significance(zscore):
 def significance(n, b, alpha, k=0):
     """
     Returns the significance for detecting n counts when alpha * b are expected.
-    If sigma=0 and k=0 (default), this is the case with no additional systematic error and the classic result
-    from Li & Ma (1983) is used. Example::
+    If k=0 (default), the classic result of Li & Ma (1983) is used. Example::
 
-        significance(n, b, alpha)
+        # expected a 10% success rate in 70 tries. Got 10 hits.
+        significance(n=10, b=70, alpha=0.1) 
 
     If k>0 then eq.7 from Vianello (2018) is used, which assumes that k is the upper boundary on the fractional
     systematic uncertainty. Example::
  
-        significance(n, b, alpha, k=0.1)
+        # expected a 10% +- 10% success rate in 70 tries. Got 10 hits.
+        significance(n=10, b=70, alpha=0.1, k=0.1)
 
     If k<0, then alpha * b is assumed to have no uncertainties.
 
@@ -102,7 +103,10 @@ def posterior(rate, n, b, alpha, exposure=1.0):
     :param alpha: ratio of the source observation efficiency and background observation efficiency
     :param exposure: exposure time, area, volume, or similar to convert the rate to expected source counts.
         (either a float, or an array of the same shape of n)
-    :return: the likelihood value
+    :return: the probability
+
+    Knoetig2014, appendix C. A flat prior on the background rate is assumed.
+    https://ui.adsabs.harvard.edu/abs/2014ApJ...790..106K/abstract
     """
 
     nexp = exposure * rate
@@ -123,6 +127,8 @@ def uncertainties_rate(k, q=pvalue_from_significance([0, -1, +1]), exposure=1.0)
     :return: error bars on the number of events. By default, the median, lower and upper 1 sigma estimates.
 
     Caveat: this assumes a uniform prior on the number of events.
+
+    See e.g., https://arxiv.org/abs/1012.0566
     """
     assert isinstance(k, (int, np.integer)) or isinstance(k, np.ndarray) and k.dtype == int, "k must be integer"
     assert np.all(q > 0), "Quantile must be between zero and one."
