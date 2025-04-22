@@ -49,6 +49,7 @@ setup(
     keywords='poissonregime',
     name='poissonregime',
     py_modules=['poissonregime'],
+    packages=['gamma_limits_sensitivity'],
     setup_requires=setup_requirements,
     test_suite='tests',
     tests_require=test_requirements,
