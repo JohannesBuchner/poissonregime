@@ -1200,8 +1200,14 @@ def li_ma_significance(n_on, n_off, alpha):
     "Analysis methods for results in gamma-ray astronomy."
     The Astrophysical Journal 272 (1983): 317-324.
     '''
-    n_on = np.array(n_on, copy=False, ndmin=1)
-    n_off = np.array(n_off, copy=False, ndmin=1)
+    n_on = np.asarray(n_on)
+    n_off = np.asarray(n_off)
+    # remember scalar inputs so a scalar can be returned: callers like
+    # scipy.optimize.brentq require a scalar result, and returning a 1-d
+    # array breaks under numpy 2
+    scalar_input = n_on.ndim == 0 and n_off.ndim == 0
+    n_on = n_on[None] if n_on.ndim == 0 else n_on
+    n_off = n_off[None] if n_off.ndim == 0 else n_off
 
     with np.errstate(divide='ignore', invalid='ignore'):
         p_on = n_on / (n_on + n_off)
@@ -1216,4 +1222,6 @@ def li_ma_significance(n_on, n_off, alpha):
     significance[np.isnan(significance)] = 0
     significance[n_on < alpha * n_off] = 0
 
+    if scalar_input:
+        return significance[0]
     return significance
