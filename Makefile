@@ -59,7 +59,7 @@ clean-doc:
 	#nbstripout docs/*.ipynb
 
 lint: ## check style with flake8
-	flake8 poissonregime tests
+	flake8 gamma_limits_sensitivity tests
 
 test: ## run tests quickly with the default Python
 	PYTHONPATH=. pytest

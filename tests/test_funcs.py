@@ -4,13 +4,13 @@ from numpy.testing import assert_array_equal, assert_array_almost_equal, assert_
 from hypothesis import example, given, assume, strategies as st
 import hypothesis.extra.numpy
 
-from poissonregime import significance_from_pvalue, pvalue_from_significance, uncertainties_rate, uncertainties_fraction
+from poissonregime import significance_from_pvalue, pvalue_from_significance, uncertainties_rate, uncertainties_fraction, tiny
 
 sigstrategy = st.floats(allow_nan=False, allow_infinity=False, min_value=-7, max_value=7)
 probstrategy = st.floats(allow_nan=False, allow_infinity=False, min_value=0, max_value=1)
 countstrategy = st.integers(min_value=0, max_value=100000000)
 
-@given(st.one_of(sigstrategy, hypothesis.extra.numpy.arrays(np.float, shape=hypothesis.extra.numpy.array_shapes(), elements=sigstrategy)))
+@given(st.one_of(sigstrategy, hypothesis.extra.numpy.arrays(float, shape=hypothesis.extra.numpy.array_shapes(), elements=sigstrategy)))
 @example(0)
 @example(-1)
 @example(np.array([0.0, -1, +1]))
@@ -20,13 +20,16 @@ def test_sig(s):
 	print(s, p, o)
 	assert_allclose(o, s, atol=1e-5)
 
-@given(st.one_of(probstrategy, hypothesis.extra.numpy.arrays(np.float, shape=hypothesis.extra.numpy.array_shapes(), elements=probstrategy)))
+@given(st.one_of(probstrategy, hypothesis.extra.numpy.arrays(float, shape=hypothesis.extra.numpy.array_shapes(), elements=probstrategy)))
 @example(0.1)
 @example(0.5)
 @example(np.array([0.5, 0.01, 0.99]))
 def test_p(p):
 	assume(np.all(p>0))
 	assume(np.all(p<1))
+	# significance_from_pvalue only supports pvalues above the smallest
+	# representable float
+	assume(np.all(p>tiny))
 	s = significance_from_pvalue(p)
 	o = pvalue_from_significance(s)
 	print(s, p, o)
@@ -64,6 +67,8 @@ def test_fraction(p):
 	assume(np.all(q>0))
 	assume(np.all(q<1))
 	frac = uncertainties_fraction(k=k, q=q, n=n)
+	# scipy's betaincinv returns nan for quantiles too small to invert
+	assume(np.all(frac==frac))
 	assert np.all(frac>=0)
 	assert np.all(frac<=1)
 

@@ -43,7 +43,8 @@ extensions = [
     'nbsphinx',
     'sphinx_rtd_theme',
     'sphinx.ext.napoleon',
-#    'edit_on_github',
+    'edit_on_github',
+    'nbbinder',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -107,9 +108,14 @@ autoclass_content = 'both'
 
 
 edit_on_github_project = 'JohannesBuchner/poissonregime'
-edit_on_github_branch = 'master'
+edit_on_github_branch = 'main'
 #edit_on_github_url
-edit_on_github_src = 'docs/'  # optional. default: ''
+edit_on_github_src_path = 'docs/'  # optional. default: ''
+
+binder_project = 'JohannesBuchner/poissonregime'
+binder_branch = 'main'
+binder_org = 'mybinder.org'
+binder_src_path = 'docs/'
 
 # -- Options for HTML output -------------------------------------------
 
